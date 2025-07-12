@@ -1,0 +1,1 @@
+export {Default as About} from "./About.png"
