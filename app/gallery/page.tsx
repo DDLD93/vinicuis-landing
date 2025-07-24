@@ -9,6 +9,7 @@ export default function Gallery() {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewAll, setViewAll] = useState(false);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const searchParams = useSearchParams();
 
@@ -139,82 +140,98 @@ export default function Gallery() {
       category: 'Construction'
     },
     
-    // Automobile Category - 2 images
-      {
-        src: '/automobile/1.jpg',
-        title: 'Automotive Manufacturing',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/2.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/3.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/4.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/5.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/6.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/7.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/8.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/9.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/10.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/11.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/12.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/13.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-      {
-        src: '/automobile/14.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
-        {
-        src: '/automobile/15.jpg',
-        title: 'Vehicle Assembly Line',
-        category: 'Automobile',
-      },
+    // Automobile Category - with make and model
+    {
+      src: '/automobile/3.jpg',
+      title: 'BMW X7',
+      category: 'Automobile',
+      make: 'BMW',
+      model: 'X7',
+    },
+    {
+      src: '/automobile/4.jpg',
+      title: 'Cadilac',
+      category: 'Automobile',
+      make: 'Cadilac',
+      model: 'Escalde',
+    },
+    {
+      src: '/automobile/5.jpg',
+      title: 'Land-Rover',
+      category: 'Automobile',
+      make: 'Land-Rover',
+      model: 'Land Rover',
+    },
+    {
+      src: '/automobile/6.jpg',
+      title: 'Lexus GX550',
+      category: 'Automobile',
+      make: 'Lexus',
+      model: 'GX550',
+    },
+    {
+      src: '/automobile/7.jpg',
+      title: 'Lexus LX600',
+      category: 'Automobile',
+      make: 'Lexus',
+      model: 'LX600',
+    },
+    {
+      src: '/automobile/8.jpg',
+      title: 'Mercedes-Benz G63 AMG',
+      category: 'Automobile',
+      make: 'Mercedes-Benz',
+      model: 'G63 AMG',
+    },
+    {
+      src: '/automobile/9.jpg',
+      title: 'Mercedes-Benz',
+      category: 'Automobile',
+      make: 'Mercedes-Benz',
+      model: 'GLS 600',
+    },
+    {
+      src: '/automobile/10.jpg',
+      title: 'ROlls-Royce Cullinan',
+      category: 'Automobile',
+      make: 'ROlls-Royce',
+      model: 'Cullinan',
+    },
+    {
+      src: '/automobile/11.jpg',
+      title: 'Toyota 4Runner',
+      category: 'Automobile',
+      make: 'Toyota',
+      model: '4Runne',
+    },
+    {
+      src: '/automobile/12.jpg',
+      title: 'Toyota Fortuner',
+      category: 'Automobile',
+      make: 'Toyota',
+      model: 'Fortuner',
+    },
+    {
+      src: '/automobile/13.jpg',
+      title: 'Toyota LandCuruiser',
+      category: 'Automobile',
+      make: 'Toyota',
+      model: 'Land Curuiser 300',
+    },
+    {
+      src: '/automobile/14.jpg',
+      title: 'Toyota LandCruiser',
+      category: 'Automobile',
+      make: 'Toyota',
+      model: 'LandCruiser 250',
+    },
+    {
+      src: '/automobile/15.jpg',
+      title: 'Toyota Sequoia',
+      category: 'Automobile',
+      make: 'Toyota',
+      model: 'Sequoia',
+    },
     
     // ASCC Security Category
     {
@@ -288,7 +305,7 @@ export default function Gallery() {
   const totalPages = Math.ceil(validImages.length / imagesPerPage);
   const startIndex = (currentPage - 1) * imagesPerPage;
   const endIndex = startIndex + imagesPerPage;
-  const currentImages = validImages.slice(startIndex, endIndex);
+  const currentImages = viewAll ? validImages : validImages.slice(startIndex, endIndex);
 
   // Handle image load errors
   const handleImageError = (imageSrc: string) => {
@@ -392,7 +409,7 @@ export default function Gallery() {
 
       {/* Gallery Grid */}
       <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           {currentImages.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -402,13 +419,13 @@ export default function Gallery() {
                     className="relative group card-hover bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer"
                     onClick={() => setSelectedImage(image.src)}
                   >
-                    <div className="aspect-square overflow-hidden bg-gray-100">
+                    <div className="aspect-[6/3] overflow-hidden bg-gray-100">
                       <Image
                         src={image.src}
                         alt={image.title}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                        width={300}
-                        height={300}
+                        width={480}
+                        height={360}
                         onError={() => handleImageError(image.src)}
                         priority={index < 6} // Prioritize first 6 images
                       />
@@ -418,7 +435,14 @@ export default function Gallery() {
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                       <h3 className="text-white font-semibold">{image.title}</h3>
-                      <p className="text-gray-200 text-sm">{image.category}</p>
+                      {image.category === 'Automobile' && (
+                        <p className="text-gray-200 text-sm">
+                          Make: {image.make} | Model: {image.model}
+                        </p>
+                      )}
+                      {image.category !== 'Automobile' && (
+                        <p className="text-gray-200 text-sm">{image.category}</p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -426,14 +450,14 @@ export default function Gallery() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="mt-12 flex items-center justify-center">
+                <div className="mt-12 flex flex-col items-center justify-center space-y-4">
                   <div className="flex items-center space-x-2">
                     {/* Previous Button */}
                     <button
                       onClick={goToPreviousPage}
-                      disabled={currentPage === 1}
+                      disabled={currentPage === 1 || viewAll}
                       className={`p-2 rounded-lg transition-colors duration-300 ${
-                        currentPage === 1
+                        currentPage === 1 || viewAll
                           ? 'text-gray-400 cursor-not-allowed'
                           : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'
                       }`}
@@ -447,15 +471,15 @@ export default function Gallery() {
                       {getPageNumbers().map((page, index) => (
                         <button
                           key={index}
-                          onClick={() => typeof page === 'number' && goToPage(page)}
+                          onClick={() => typeof page === 'number' && !viewAll && goToPage(page)}
                           className={`px-3 py-2 rounded-lg font-medium transition-all duration-300 ${
-                            page === currentPage
+                            page === currentPage && !viewAll
                               ? 'bg-red-600 text-white shadow-lg'
                               : page === '...'
                               ? 'text-gray-400 cursor-default'
                               : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'
                           }`}
-                          disabled={page === '...'}
+                          disabled={page === '...' || viewAll}
                           aria-label={typeof page === 'number' ? `Go to page ${page}` : undefined}
                         >
                           {page}
@@ -466,9 +490,9 @@ export default function Gallery() {
                     {/* Next Button */}
                     <button
                       onClick={goToNextPage}
-                      disabled={currentPage === totalPages}
+                      disabled={currentPage === totalPages || viewAll}
                       className={`p-2 rounded-lg transition-colors duration-300 ${
-                        currentPage === totalPages
+                        currentPage === totalPages || viewAll
                           ? 'text-gray-400 cursor-not-allowed'
                           : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'
                       }`}
@@ -477,6 +501,13 @@ export default function Gallery() {
                       <ChevronRight className="h-5 w-5" />
                     </button>
                   </div>
+                  {/* View All Button */}
+                  <button
+                    onClick={() => setViewAll(v => !v)}
+                    className="px-6 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  >
+                    {viewAll ? 'Show Paginated' : 'View All'}
+                  </button>
                 </div>
               )}
 
@@ -484,8 +515,10 @@ export default function Gallery() {
               {totalPages > 1 && (
                 <div className="mt-4 text-center text-gray-600">
                   <p>
-                    Showing {startIndex + 1}-{Math.min(endIndex, validImages.length)} of {validImages.length} images
-                    {activeCategory !== 'All' && ` in ${activeCategory}`}
+                    {viewAll
+                      ? `Showing all ${validImages.length} images${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`
+                      : `Showing ${startIndex + 1}-${Math.min(endIndex, validImages.length)} of ${validImages.length} images${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`
+                    }
                   </p>
                 </div>
               )}
@@ -510,10 +543,30 @@ export default function Gallery() {
             <Image
               src={selectedImage}
               alt="Gallery Image"
-              className="max-w-full max-h-full rounded-lg"
-              width={800}
-              height={800}
+              className="max-w-full max-h-[80vh] rounded-lg"
+              width={1900}
+              height={900}
             />
+            {/* Show make/model if automobile */}
+            {(() => {
+              const imgObj = galleryImages.find(img => img.src === selectedImage);
+              if (imgObj && imgObj.category === 'Automobile') {
+                return (
+                  <div className="mt-4 text-center text-white">
+                    <h3 className="text-2xl font-bold">{imgObj.title}</h3>
+                    <p className="text-gray-300 text-lg">Make: {imgObj.make} | Model: {imgObj.model}</p>
+                  </div>
+                );
+              } else if (imgObj) {
+                return (
+                  <div className="mt-4 text-center text-white">
+                    <h3 className="text-2xl font-bold">{imgObj.title}</h3>
+                    <p className="text-gray-300 text-sm">{imgObj.category}</p>
+                  </div>
+                );
+              }
+              return null;
+            })()}
             <button
               onClick={() => setSelectedImage(null)}
               className="absolute top-4 right-4 text-white hover:text-red-400 text-2xl"

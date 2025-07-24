@@ -70,7 +70,7 @@ export default function Contact() {
       icon: Phone,
       title: 'Call Us',
       details: '+234 70x xxx xxxx',
-      link: 'tel:+2347035469259'
+      link: ''
     },
     {
       icon: MapPin,

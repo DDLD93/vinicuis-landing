@@ -65,7 +65,7 @@ export default function Chatbot() {
     'agro-trade': 'Richfood Essentials specializes in international agricultural trade with $3+ million in annual exports, strict quality control, and large-scale warehousing facilities.',
     'pharmaceutical': 'Our Pharmaceutical Development division focuses on essential medicine production to support Nigeria\'s healthcare sector with state-of-the-art facilities.',
     'football': 'Our Football Academy develops young talent through professional coaching programs, modern facilities, and comprehensive youth development initiatives.',
-    'contact': 'You can reach us at:\n📧 info@vinicius.com\n📞 +234 703 546 9259 | +234 803 234 6067\n📍 13B Shettima Mongonu Crescent, Utako, Abuja, Nigeria',
+    'contact': 'You can reach us at:\n📧 info@vinicius.com\n📞 +234 703 546 9259 | +234 80 xxx xxxx\n📍 13B Shettima Mongonu Crescent, Utako, Abuja, Nigeria',
     'about': 'Vinicius International is a proudly Nigerian conglomerate with over $80 million in assets. We drive national progress across security, construction, agro-trade, and aviation sectors.',
     'price': 'For pricing information, please contact our sales team at info@vinicius.com or call +234 70x xxx xxxx. We provide customized quotes based on your specific requirements.',
     'location': 'Our headquarters is located at 13B Shettima Mongonu Crescent, Utako, Abuja, Nigeria. We also have facilities in Kaduna and Niger states.',

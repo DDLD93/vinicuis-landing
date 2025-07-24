@@ -13,38 +13,7 @@ const galleryImages = [
     src: '/security/2.jpg',
     title: 'VIP Protection Services',
     category: 'Security',
-  },
-  {
-    src: '/security/3.jpg',
-    title: 'Security Training Facility',
-    category: 'Security',
-  },
-  {
-    src: '/security/4.jpg',
-    title: 'Armored Vehicle Assembly',
-    category: 'Security',
-  },
-  {
-    src: '/security/5.jpg',
-    title: 'Security Equipment',
-    category: 'Security',
-  },
-  {
-    src: '/security/6.jpg',
-    title: 'Security Personnel Training',
-    category: 'Security',
-  },
-  {
-    src: '/security/7.jpg',
-    title: 'Advanced Security Systems',
-    category: 'Security',
-  },
-  {
-    src: '/security/8.jpg',
-    title: 'Security Infrastructure',
-    category: 'Security',
-  },
-  
+  },  
   // Construction Category
   {
     src: '/construction/1.jpg',
@@ -60,76 +29,20 @@ const galleryImages = [
     src: '/construction/3.jpg',
     title: 'Housing Complex',
     category: 'Construction',
-  },
-  {
-    src: '/construction/4.jpg',
-    title: 'Modern Building Construction',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/5.jpg',
-    title: 'Construction Site Management',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/6.jpg',
-    title: 'Road Construction',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/7.jpg',
-    title: 'Industrial Construction',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/8.jpg',
-    title: 'Residential Development',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/9.jpg',
-    title: 'Commercial Building',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/10.jpg',
-    title: 'Construction Equipment',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/11.jpg',
-    title: 'Project Management',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/12.jpg',
-    title: 'Quality Control',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/13.jpg',
-    title: 'Site Planning',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/14.jpg',
-    title: 'Structural Engineering',
-    category: 'Construction',
-  },
-  {
-    src: '/construction/15.jpg',
-    title: 'Final Project Delivery',
-    category: 'Construction',
-  },
-  
+  },  
   // Automobile Category
   {
-    src: '/automobile/1.jpg',
+    src: '/automobile/3.jpg',
     title: 'Automotive Manufacturing',
     category: 'Automobile',
   },
   {
-    src: '/automobile/2.jpg',
+    src: '/automobile/4.jpg',
+    title: 'Vehicle Assembly Line',
+    category: 'Automobile',
+  },
+  {
+    src: '/automobile/5.jpg',
     title: 'Vehicle Assembly Line',
     category: 'Automobile',
   },
