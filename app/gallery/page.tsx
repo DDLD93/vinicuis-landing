@@ -140,16 +140,82 @@ export default function Gallery() {
     },
     
     // Automobile Category - 2 images
-    {
-      src: '/automobile/1.jpg',
-      title: 'Automotive Manufacturing',
-      category: 'Automobile'
-    },
-    {
-      src: '/automobile/2.jpg',
-      title: 'Vehicle Assembly Line',
-      category: 'Automobile'
-    },
+      {
+        src: '/automobile/1.jpg',
+        title: 'Automotive Manufacturing',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/2.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/3.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/4.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/5.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/6.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/7.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/8.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/9.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/10.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/11.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/12.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/13.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+      {
+        src: '/automobile/14.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+        {
+        src: '/automobile/15.jpg',
+        title: 'Vehicle Assembly Line',
+        category: 'Automobile',
+      },
+    
     // ASCC Security Category
     {
       src: '/ascc-security/Gemini_Generated_Image_od0a3qod0a3qod0a.png',

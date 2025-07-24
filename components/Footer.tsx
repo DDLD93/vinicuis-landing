@@ -110,7 +110,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-red-600" />
-                <Link href="tel:+2347035469259" className="text-gray-400 hover:text-red-600 transition-colors duration-300">
+                <Link href="" className="text-gray-400 hover:text-red-600 transition-colors duration-300">
                   +234 70x xxx xxxx
                 </Link>
               </div>
@@ -120,7 +120,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-400">
-            © 2024 Vinicius International. All rights reserved.
+            © {new Date().getFullYear()} Vinicius International. All rights reserved.
           </p>
         </div>
       </div>

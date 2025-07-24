@@ -263,11 +263,11 @@ export default function Contact() {
                     <div>
                       <p className="font-semibold text-gray-900">Phone</p>
                       <p className="text-gray-600">
-                        <a href="tel:+2347035469259" className="text-red-600 hover:text-red-700">
+                        <a href="" className="text-red-600 hover:text-red-700">
                           +234 70x xxx xxxx
                         </a>
                         <br />
-                        <a href="tel:+2348032346067" className="text-red-600 hover:text-red-700">
+                        <a href="" className="text-red-600 hover:text-red-700">
                           +234 80x xxx xxxx
                         </a>
                       </p>
