@@ -104,8 +104,8 @@ export default function Footer() {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-red-600" />
-                <Link href="mailto:info@vinicius.com" className="text-gray-400 hover:text-red-600 transition-colors duration-300">
-                  info@vinicius.com
+                <Link href="mailto:info@viniciusint.com" className="text-gray-400 hover:text-red-600 transition-colors duration-300">
+                  info@viniciusint.com
                 </Link>
               </div>
               <div className="flex items-center space-x-3">

@@ -64,7 +64,7 @@ export default function Contact() {
       icon: Mail,
       title: 'Email Us',
       details: 'info@viniciusint.com',
-      link: 'mailto:info@vinicius.com'
+      link: 'mailto:info@viniciusint.com'
     },
     {
       icon: Phone,
@@ -252,8 +252,8 @@ export default function Contact() {
                     <Mail className="h-6 w-6 text-red-600 mt-1" />
                     <div>
                       <p className="font-semibold text-gray-900">Email</p>
-                      <a href="mailto:info@vinicius.com" className="text-red-600 hover:text-red-700">
-                        info@vinicius.com
+                      <a href="mailto:info@viniciusint.com" className="text-red-600 hover:text-red-700">
+                        info@viniciusint.com
                       </a>
                     </div>
                   </div>
@@ -318,7 +318,7 @@ export default function Contact() {
             <a href="tel:+2347035469259" className="btn-secondary text-lg px-8 py-4">
               Call Now
             </a>
-            <a href="mailto:info@vinicius.com" className="btn-primary text-lg px-8 py-4">
+            <a href="mailto:info@viniciusint.com" className="btn-primary text-lg px-8 py-4">
               Email Us
             </a>
           </div>
