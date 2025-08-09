@@ -63,7 +63,7 @@ export default function Contact() {
     {
       icon: Mail,
       title: 'Email Us',
-      details: 'info@vinicius.com',
+      details: 'info@viniciusint.com',
       link: 'mailto:info@vinicius.com'
     },
     {
