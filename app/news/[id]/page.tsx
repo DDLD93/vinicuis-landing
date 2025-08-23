@@ -17,7 +17,7 @@ const newsUpdates = [
     category: 'Security',
     author: 'Amure Eniola',
     image: 'https://images.pexels.com/photos/8872465/pexels-photo-8872465.jpeg?auto=compress&cs=tinysrgb&w=600',
-    content: `Vinicius International: Building Africa's Security Future
+         content: `Vinicius International: Building Africa's Security Future
 
 Licensed under DICON, Vinicius International is redefining African security with locally assembled armoured vehicles, integrated surveillance systems, and advanced training, proving that Africa's defence future can be built on African soil, by African hands.
 
@@ -29,7 +29,11 @@ Closing the Gap
 
 Demand is at an all-time high. From West to Central Africa, rising insecurity is driving governments to expand defence budgets. Nigeria leads West Africa's spending, while nations like South Sudan and the Democratic Republic of Congo have doubled allocations in response to internal conflict. This surge highlights a critical truth: Africa's need for reliable, locally built security hardware has never been greater.
 
+[CHART1]
+
 Yet supply remains lopsided. Outside of South Africa, Egypt, and Sudan, domestic production is minimal. Between 2019 and 2023, Russia accounted for 24 % of Africa's arms imports, followed by the United States (16 %), China (13 %), and France (10 %). Every delay in these global supply chains carries a cost measured not just in dollars, but in lives and sovereignty.
+
+[CHART2]
 
 Vinicius International is bridging that gap. By assembling armoured tactical vehicles in Nigeria and integrating surveillance and UAV systems tailored to local realities, Vinicius International offers a speed, adaptability, and reliability foreign suppliers cannot match.
 
@@ -174,10 +178,76 @@ export default function NewsArticlePage({ params }: { params: { id: string } }) 
 
         {/* Article Content */}
         <div className="prose prose-lg max-w-none">
-          <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-            {news.content}
+          <div className="text-gray-700 leading-relaxed">
+            {(() => {
+              const parts = news.content.split('[CHART1]');
+              const firstPart = parts[0];
+              const secondPart = parts[1];
+              
+              if (secondPart) {
+                const secondParts = secondPart.split('[CHART2]');
+                const beforeChart2 = secondParts[0];
+                const afterChart2 = secondParts[1];
+                
+                return (
+                  <>
+                    {/* First part before CHART1 */}
+                    <div className="whitespace-pre-line mb-6">
+                      {firstPart}
+                    </div>
+                    
+                    {/* First Chart */}
+                    <div className="my-8 text-center">
+                      <h3 className="text-xl font-semibold text-gray-800 mb-4">African Defense Market Analysis</h3>
+                      <Image
+                        src="/chart1.png"
+                        alt="Chart showing African defense market trends and statistics"
+                        width={800}
+                        height={600}
+                        className="w-full h-auto rounded-lg shadow-lg mx-auto"
+                      />
+                      <p className="text-sm text-gray-500 mt-2">Source: Vinicius International Research</p>
+                    </div>
+                    
+                    {/* Second part before CHART2 */}
+                    <div className="whitespace-pre-line mb-6">
+                      {beforeChart2}
+                    </div>
+                    
+                    {/* Second Chart */}
+                    <div className="my-8 text-center">
+                      <h3 className="text-xl font-semibold text-gray-800 mb-4">Regional Security Spending Patterns</h3>
+                      <Image
+                        src="/chart2.png"
+                        alt="Chart showing regional security spending patterns across Africa"
+                        width={800}
+                        height={600}
+                        className="w-full h-auto rounded-lg shadow-lg mx-auto"
+                      />
+                      <p className="text-sm text-gray-500 mt-2">Source: Vinicius International Research</p>
+                    </div>
+                    
+                    {/* Final part after CHART2 */}
+                    {afterChart2 && (
+                      <div className="whitespace-pre-line mb-6">
+                        {afterChart2}
+                      </div>
+                    )}
+                  </>
+                );
+              }
+              
+              // Fallback if no charts
+              return (
+                <div className="whitespace-pre-line mb-6">
+                  {news.content}
+                </div>
+              );
+            })()}
           </div>
         </div>
+
+
 
         {/* Share and Navigation */}
         <div className="mt-12 pt-8 border-t border-gray-200">
