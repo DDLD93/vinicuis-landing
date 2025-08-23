@@ -5,7 +5,6 @@ import { useEffect, useState, useRef } from 'react';
 import { Shield, Truck, Building, Plane, Leaf, Award, ArrowRight, Users, Target, Globe, ExternalLink, Calendar, Car, Plus } from 'lucide-react';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import GalleryCarousel from '@/components/GalleryCarousel';
-import ShareButton from '@/components/ShareButton';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
@@ -428,27 +427,15 @@ export default function Home() {
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                     {news.excerpt}
                   </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">{news.readTime}</span>
-                    <div className="flex items-center gap-2">
-                      <ShareButton 
-                        data={{
-                          title: news.title,
-                          url: typeof window !== 'undefined' ? `${window.location.origin}/news/${news.id}` : '',
-                          description: news.excerpt,
-                          image: news.image
-                        }}
-                        size="sm"
-                        variant="ghost"
-                      />
-                      <Link 
-                        href={`/news/${news.id}`}
-                        className="text-red-600 hover:text-red-700 font-semibold text-sm flex items-center"
-                      >
-                        Read More <ArrowRight className="h-3 w-3 ml-1" />
-                      </Link>
-                    </div>
-                  </div>
+                                     <div className="flex items-center justify-between">
+                     <span className="text-xs text-gray-500">{news.readTime}</span>
+                     <Link 
+                       href={`/news/${news.id}`}
+                       className="text-red-600 hover:text-red-700 font-semibold text-sm flex items-center"
+                     >
+                       Read More <ArrowRight className="h-3 w-3 ml-1" />
+                     </Link>
+                   </div>
                 </div>
               </article>
             ))}
