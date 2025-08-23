@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Shield, Truck, Building, Plane, Leaf, Award, ArrowRight, Users, Target, Globe, ExternalLink, Calendar, Car, Plus } from 'lucide-react';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import GalleryCarousel from '@/components/GalleryCarousel';
+import ShareButton from '@/components/ShareButton';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
@@ -99,6 +100,15 @@ export default function Home() {
   const newsUpdates = [
     {
       id: 1,
+      title: 'Vinicius International: Building Africa\'s Security Future',
+      excerpt: 'Licensed under DICON, Vinicius International is redefining African security with locally assembled armoured vehicles, integrated surveillance systems, and advanced training.',
+      date: '2024-01-20',
+      category: 'Security',
+      image: 'https://images.pexels.com/photos/8872465/pexels-photo-8872465.jpeg?auto=compress&cs=tinysrgb&w=600',
+      readTime: '8 min read'
+    },
+    {
+      id: 2,
       title: 'Vinicius International Delivers 50 Armored Vehicles to Nigerian Security Forces',
       excerpt: 'In a landmark achievement, Vinicius International has successfully delivered 50 state-of-the-art armored vehicles to enhance national security capabilities.',
       date: '2024-01-15',
@@ -107,22 +117,13 @@ export default function Home() {
       readTime: '3 min read'
     },
     {
-      id: 2,
+      id: 3,
       title: 'New Construction Project: 100-Unit Housing Estate in Abuja',
       excerpt: 'Saiha Constructions breaks ground on ambitious housing project that will provide affordable homes for government workers.',
       date: '2024-01-10',
       category: 'Construction',
       image: 'https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&w=600',
       readTime: '4 min read'
-    },
-    {
-      id: 3,
-      title: 'Record Agricultural Exports: $5M in International Trade',
-      excerpt: 'Richfood Essentials achieves milestone with record-breaking agricultural exports to European and Asian markets.',
-      date: '2024-01-05',
-      category: 'Agro-Trade',
-      image: 'https://images.pexels.com/photos/1595104/pexels-photo-1595104.jpeg?auto=compress&cs=tinysrgb&w=600',
-      readTime: '2 min read'
     }
   ];
 
@@ -429,12 +430,24 @@ export default function Home() {
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-gray-500">{news.readTime}</span>
-                    <Link 
-                      href={`/news/${news.id}`}
-                      className="text-red-600 hover:text-red-700 font-semibold text-sm flex items-center"
-                    >
-                      Read More <ArrowRight className="h-3 w-3 ml-1" />
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <ShareButton 
+                        data={{
+                          title: news.title,
+                          url: typeof window !== 'undefined' ? `${window.location.origin}/news/${news.id}` : '',
+                          description: news.excerpt,
+                          image: news.image
+                        }}
+                        size="sm"
+                        variant="ghost"
+                      />
+                      <Link 
+                        href={`/news/${news.id}`}
+                        className="text-red-600 hover:text-red-700 font-semibold text-sm flex items-center"
+                      >
+                        Read More <ArrowRight className="h-3 w-3 ml-1" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </article>
