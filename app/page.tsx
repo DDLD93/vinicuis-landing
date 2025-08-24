@@ -134,7 +134,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="overflow-hidden">
+    <div>
       {/* Hero Section */}
       <motion.section
         className="relative min-h-[80vh] h-screen flex items-center justify-center gradient-bg px-2 sm:px-0"
