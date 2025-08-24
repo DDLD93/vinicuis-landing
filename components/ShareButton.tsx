@@ -21,6 +21,37 @@ export default function ShareButton({
   const [copied, setCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Debug log when component receives data
+  useEffect(() => {
+    console.log('ShareButton received data:', data);
+    console.log('ShareButton URL:', data.url);
+    
+    // If no URL is provided, try to get the current page URL
+    if (!data.url && typeof window !== 'undefined') {
+      console.log('No URL provided, using current page URL:', window.location.href);
+    }
+  }, [data]);
+
+  // Get the URL to share (fallback to current page if none provided)
+  const getShareUrl = (): string => {
+    console.log('getShareUrl called with data.url:', data.url);
+    
+    if (data.url) {
+      console.log('Using provided URL:', data.url);
+      return data.url;
+    }
+    
+    // Fallback to current page URL
+    if (typeof window !== 'undefined') {
+      const currentUrl = window.location.href;
+      console.log('No URL provided, using current page URL:', currentUrl);
+      return currentUrl;
+    }
+    
+    console.log('No URL available');
+    return '';
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -48,7 +79,9 @@ export default function ShareButton({
   };
 
   const handleCopy = async () => {
-    const success = await shareUtils.copyToClipboard(data.url);
+    const shareUrl = getShareUrl();
+    console.log('Sharing URL:', shareUrl); // Debug log
+    const success = await shareUtils.copyToClipboard(shareUrl);
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -66,7 +99,9 @@ export default function ShareButton({
   };
 
   const handleNativeShare = async () => {
-    const success = await shareUtils.nativeShare(data);
+    const shareUrl = getShareUrl();
+    console.log('Native sharing URL:', shareUrl); // Debug log
+    const success = await shareUtils.nativeShare({ ...data, url: shareUrl });
     if (success) {
       setIsOpen(false);
     }
@@ -76,31 +111,51 @@ export default function ShareButton({
     {
       label: 'Facebook',
       icon: Facebook,
-      action: () => shareUtils.shareOnFacebook(data),
+      action: () => {
+        const shareUrl = getShareUrl();
+        console.log('Facebook sharing URL:', shareUrl); // Debug log
+        shareUtils.shareOnFacebook({ ...data, url: shareUrl });
+      },
       color: 'hover:bg-blue-50 hover:text-blue-600'
     },
     {
       label: 'Twitter/X',
       icon: Twitter,
-      action: () => shareUtils.shareOnTwitter(data),
+      action: () => {
+        const shareUrl = getShareUrl();
+        console.log('Twitter sharing URL:', shareUrl); // Debug log
+        shareUtils.shareOnTwitter({ ...data, url: shareUrl });
+      },
       color: 'hover:bg-sky-50 hover:text-sky-600'
     },
     {
       label: 'LinkedIn',
       icon: Linkedin,
-      action: () => shareUtils.shareOnLinkedIn(data),
+      action: () => {
+        const shareUrl = getShareUrl();
+        console.log('LinkedIn sharing URL:', shareUrl); // Debug log
+        shareUtils.shareOnLinkedIn({ ...data, url: shareUrl });
+      },
       color: 'hover:bg-blue-50 hover:text-blue-600'
     },
     {
       label: 'WhatsApp',
       icon: MessageCircle,
-      action: () => shareUtils.shareOnWhatsApp(data),
+      action: () => {
+        const shareUrl = getShareUrl();
+        console.log('WhatsApp sharing URL:', shareUrl); // Debug log
+        shareUtils.shareOnWhatsApp({ ...data, url: shareUrl });
+      },
       color: 'hover:bg-green-50 hover:text-green-600'
     },
     {
       label: 'Email',
       icon: Mail,
-      action: () => shareUtils.shareViaEmail(data),
+      action: () => {
+        const shareUrl = getShareUrl();
+        console.log('Email sharing URL:', shareUrl); // Debug log
+        shareUtils.shareViaEmail({ ...data, url: shareUrl });
+      },
       color: 'hover:bg-gray-50 hover:text-gray-600'
     },
     {
@@ -115,7 +170,11 @@ export default function ShareButton({
     <div className="relative" ref={dropdownRef}>
       {/* Main Share Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          console.log('Share button clicked!');
+          console.log('Final share URL will be:', getShareUrl());
+          setIsOpen(!isOpen);
+        }}
         className={`
           ${sizeClasses[size]}
           ${variantClasses[variant]}
@@ -134,7 +193,7 @@ export default function ShareButton({
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50 animate-slide-up">
           {/* Native Share Option (mobile) */}
-          {navigator.share && (
+          {typeof navigator !== 'undefined' && 'share' in navigator && (
             <button
               onClick={handleNativeShare}
               className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-200 flex items-center gap-3 text-gray-700"
