@@ -6,7 +6,7 @@ export const newsUpdate = [
       date: '2024-01-20',
       category: 'Security',
       author: 'Amure Eniola',
-      image: '/chart2.png',
+      image: '/chart1.png',
            content: `Vinicius International: Building Africa's Security Future
   
   Licensed under DICON, Vinicius International is redefining African security with locally assembled armoured vehicles, integrated surveillance systems, and advanced training, proving that Africa's defence future can be built on African soil, by African hands.

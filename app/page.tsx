@@ -14,6 +14,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from '@/components/ui/carousel';
+import { newsUpdate } from '@/store/newsUpdate';
 
 const About = '/About.png';
 
@@ -94,36 +95,6 @@ export default function Home() {
     { name: 'The Nigeria Police', logo: '/partners/The Nigeria Police.png', category: 'Trusted' },
     { name: 'Enugu state goverment', logo: '/partners/Enugu state goverment.png', category: 'Trusted' },
     { name: 'Nda', logo: '/partners/Nda.png', category: 'Trusted' },
-  ];
-
-  const newsUpdates = [
-    {
-      id: 1,
-      title: 'Vinicius International: Building Africa\'s Security Future',
-      excerpt: 'Licensed under DICON, Vinicius International is redefining African security with locally assembled armoured vehicles, integrated surveillance systems, and advanced training.',
-      date: '2024-01-20',
-      category: 'Security',
-      image: 'https://images.pexels.com/photos/8872465/pexels-photo-8872465.jpeg?auto=compress&cs=tinysrgb&w=600',
-      readTime: '8 min read'
-    },
-    {
-      id: 2,
-      title: 'Vinicius International Delivers 50 Armored Vehicles to Nigerian Security Forces',
-      excerpt: 'In a landmark achievement, Vinicius International has successfully delivered 50 state-of-the-art armored vehicles to enhance national security capabilities.',
-      date: '2024-01-15',
-      category: 'Security',
-      image: 'https://images.pexels.com/photos/8828687/pexels-photo-8828687.jpeg?auto=compress&cs=tinysrgb&w=600',
-      readTime: '3 min read'
-    },
-    {
-      id: 3,
-      title: 'New Construction Project: 100-Unit Housing Estate in Abuja',
-      excerpt: 'Saiha Constructions breaks ground on ambitious housing project that will provide affordable homes for government workers.',
-      date: '2024-01-10',
-      category: 'Construction',
-      image: 'https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&w=600',
-      readTime: '4 min read'
-    }
   ];
 
   const stats = [
@@ -400,8 +371,8 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {newsUpdates.map((news) => (
-              <article key={news.id} className="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
+              {newsUpdate.map((news) => (
+              <article key={news.id} className="bg-gray-100 rounded-lg shadow-lg overflow-hidden card-hover">
                 <div className="h-48 overflow-hidden">
                   <Image
                     src={news.image}
