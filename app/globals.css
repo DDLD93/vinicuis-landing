@@ -121,3 +121,91 @@
   transform: translateZ(0);
   will-change: transform;
 }
+
+/* News Article Typography Improvements */
+.news-content h1 {
+  @apply text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight;
+}
+
+.news-content h2 {
+  @apply text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 mb-4 leading-tight;
+}
+
+.news-content h3 {
+  @apply text-lg md:text-xl lg:text-2xl font-semibold text-gray-800 mb-3 leading-tight;
+}
+
+.news-content p {
+  @apply text-base md:text-lg leading-relaxed mb-4 md:mb-6 text-gray-700;
+}
+
+/* Mobile-first chart containers */
+.chart-container {
+  @apply my-8 md:my-16 text-center bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8 rounded-xl md:rounded-2xl border border-gray-200;
+}
+
+.chart-container h3 {
+  @apply text-lg md:text-2xl lg:text-3xl font-semibold text-gray-800 mb-4 md:mb-6 leading-tight;
+}
+
+.chart-container img {
+  @apply w-full h-auto max-w-4xl rounded-lg md:rounded-xl shadow-lg md:shadow-xl mx-auto;
+}
+
+.chart-container p {
+  @apply text-sm md:text-base text-gray-500 mt-3 md:mt-4 font-medium;
+}
+
+/* Improved mobile spacing */
+@media (max-width: 768px) {
+  .news-content h1 {
+    @apply text-2xl mb-4;
+  }
+  
+  .news-content h2 {
+    @apply text-xl mb-3;
+  }
+  
+  .news-content h3 {
+    @apply text-lg mb-2;
+  }
+  
+  .news-content p {
+    @apply text-base mb-4;
+  }
+  
+  .chart-container {
+    @apply my-6 p-4 rounded-lg;
+  }
+  
+  .chart-container h3 {
+    @apply text-lg mb-3;
+  }
+  
+  .chart-container p {
+    @apply text-sm mt-2;
+  }
+}
+
+/* Enhanced readability for mobile */
+@media (max-width: 640px) {
+  .news-content {
+    @apply text-sm leading-relaxed;
+  }
+  
+  .news-content h1 {
+    @apply text-xl mb-3;
+  }
+  
+  .news-content h2 {
+    @apply text-lg mb-2;
+  }
+  
+  .news-content h3 {
+    @apply text-base mb-2;
+  }
+  
+  .news-content p {
+    @apply text-sm mb-3;
+  }
+}
