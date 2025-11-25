@@ -16,6 +16,16 @@ export function generateStaticParams() {
 export default function NewsArticlePage({ params }: { params: { id: string } }) {
   const news = newsUpdate.find((n) => n.id === params.id);
   if (!news) return notFound();
+
+  // Format date consistently to avoid hydration mismatch
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month} ${day}, ${year}`;
+  };
   
   return (
     <div className="min-h-screen bg-white">
@@ -36,11 +46,7 @@ export default function NewsArticlePage({ params }: { params: { id: string } }) 
               </span>
               <span className="text-sm text-gray-500 flex items-center">
                 <Calendar className="h-4 w-4 mr-2" />
-                {new Date(news.date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                {formatDate(news.date)}
               </span>
               <span className="text-sm text-gray-500 flex items-center">
                 <Clock className="h-4 w-4 mr-2" />

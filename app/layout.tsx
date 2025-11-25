@@ -9,6 +9,7 @@ import ToastContainer from '@/components/ToastContainer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://viniciusinternational.com'),
   title: 'Vinicius International - Building, Securing, and Powering Nigeria\'s Future',
   description: 'Leading Nigerian conglomerate specializing in security solutions, construction, agro-trade, and aviation. Trusted government partner with $80M+ assets.',
   keywords: 'security equipment Nigeria, armored vehicles, construction Nigeria, agro-trade, aviation Nigeria, government contractor',

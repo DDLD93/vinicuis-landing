@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Expand, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
+import { Expand, ChevronLeft, ChevronRight, Image as ImageIcon, X } from 'lucide-react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Gallery() {
   const [isVisible, setIsVisible] = useState(false);
@@ -534,49 +535,88 @@ export default function Gallery() {
       </section>
 
       {/* Modal */}
-      {selectedImage && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative max-w-4xl max-h-full">
-            <Image
-              src={selectedImage}
-              alt="Gallery Image"
-              className="max-w-full max-h-[80vh] rounded-lg"
-              width={1900}
-              height={900}
-            />
-            {/* Show make/model if automobile */}
-            {(() => {
-              const imgObj = galleryImages.find(img => img.src === selectedImage);
-              if (imgObj && imgObj.category === 'Automobile') {
-                return (
-                  <div className="mt-4 text-center text-white">
-                    <h3 className="text-2xl font-bold">{imgObj.title}</h3>
-                    <p className="text-gray-300 text-lg">Make: {imgObj.make} | Model: {imgObj.model}</p>
-                  </div>
-                );
-              } else if (imgObj) {
-                return (
-                  <div className="mt-4 text-center text-white">
-                    <h3 className="text-2xl font-bold">{imgObj.title}</h3>
-                    <p className="text-gray-300 text-sm">{imgObj.category}</p>
-                  </div>
-                );
-              }
-              return null;
-            })()}
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 text-white hover:text-red-400 text-2xl"
-              aria-label="Close modal"
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setSelectedImage(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3, type: "spring", damping: 25 }}
+              className="relative max-w-5xl w-full max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
             >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
+            {/* Image Container */}
+            <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden">
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-red-600 text-white rounded-full p-2 transition-all duration-300 hover:scale-110 backdrop-blur-sm"
+                aria-label="Close modal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              {/* Image */}
+              <div className="relative bg-gray-100">
+                <Image
+                  src={selectedImage}
+                  alt="Gallery Image"
+                  className="w-full h-auto max-h-[75vh] object-contain"
+                  width={1900}
+                  height={900}
+                  priority
+                />
+              </div>
+
+              {/* Image Info */}
+              {(() => {
+                const imgObj = galleryImages.find(img => img.src === selectedImage);
+                if (imgObj && imgObj.category === 'Automobile') {
+                  return (
+                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white p-6">
+                      <h3 className="text-2xl font-bold mb-2">{imgObj.title}</h3>
+                      <div className="flex items-center gap-4 text-gray-300">
+                        <span className="flex items-center gap-2">
+                          <span className="text-red-400 font-semibold">Make:</span>
+                          {imgObj.make}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <span className="text-red-400 font-semibold">Model:</span>
+                          {imgObj.model}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                } else if (imgObj) {
+                  return (
+                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-2xl font-bold mb-2">{imgObj.title}</h3>
+                          <p className="text-gray-300 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                            {imgObj.category}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+            </div>
+          </motion.div>
+        </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Call to Action */}
       <section className="py-20 gradient-bg text-white relative overflow-hidden">
