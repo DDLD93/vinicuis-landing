@@ -64,11 +64,11 @@ export default function About() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="animate-slide-up">
               <h2 className="text-4xl font-bold mb-6 text-gray-900">
-                Proudly Nigerian, <span className="text-gradient">Globally Connected</span>
+                Proudly Nigerian, <span className="text-red-600">Globally Connected</span>
               </h2>
               <p className="text-gray-600 text-lg mb-6 leading-relaxed">
                 Vinicius International is a proudly Nigerian conglomerate driving national progress across 
-                security, construction, procurement, aviation, agro-trade, and emerging sectors such as 
+                security, construction, procurement, aviation, IT, agro-trade, and emerging sectors such as 
                 pharmaceuticals and sports development.
               </p>
               <p className="text-gray-600 text-lg mb-6 leading-relaxed">
@@ -76,8 +76,10 @@ export default function About() {
                 federal agencies. Our global collaborations &mdash; spanning Dubai, China, Europe, and beyond &mdash; 
                 enable us to deliver solutions that meet and exceed international standards.
               </p>
-              <div className="bg-red-50 p-6 rounded-lg border-l-4 border-red-600">
-                <p className="text-red-800 font-semibold">
+              
+              {/* Highlighted Statement Box */}
+              <div className="bg-gradient-to-r from-red-50 to-red-100 p-6 md:p-8 rounded-xl border-l-4 border-red-600 shadow-lg">
+                <p className="text-red-900 font-bold text-lg leading-relaxed">
                   With an asset base of over $80 million, our operations include the annual importation of 
                   $40&ndash;50 million worth of security equipment for the Nigerian government.
                 </p>
