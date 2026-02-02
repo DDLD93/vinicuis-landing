@@ -1,25 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const ALLOWED_TYPES = ["news", "gallery", "division"];
 // Keep under Vercel serverless request body limit (~4.5MB); multipart adds overhead
 const MAX_SIZE = 4 * 1024 * 1024; // 4MB
 const ALLOWED_MIMES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+const extensionFromMime: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+
+function getPublicUrl(bucket: string, region: string, key: string, baseUrl?: string): string {
+  if (baseUrl) {
+    const base = baseUrl.replace(/\/$/, "");
+    return `${base}/${key}`;
+  }
+  return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-    const apiKey = process.env.CLOUDINARY_API_KEY;
-    const apiSecret = process.env.CLOUDINARY_API_SECRET;
-    if (!cloudName || !apiKey || !apiSecret) {
+    const bucket = process.env.S3_BUCKET;
+    const region = process.env.AWS_REGION;
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+    const publicBaseUrl = process.env.S3_PUBLIC_BASE_URL; // optional, e.g. CloudFront URL
+
+    if (!bucket || !region || !accessKeyId || !secretAccessKey) {
       return NextResponse.json(
-        { error: "Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET." },
+        {
+          error:
+            "S3 is not configured. Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, and S3_BUCKET.",
+        },
         { status: 500 }
       );
     }
@@ -58,39 +73,42 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString("base64");
-    const dataUri = `data:${file.type};base64,${base64}`;
+    const ext =
+      extensionFromMime[file.type] ||
+      (file.name && /\.(jpe?g|png|webp|gif)$/i.test(file.name)
+        ? file.name.replace(/.*\./, "").toLowerCase()
+        : "jpg");
+    const key = `vini-web-app/${type}/${Date.now()}-${Math.random().toString(36).slice(2, 9)}.${ext}`;
 
-    const publicId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-
-    const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
-      cloudinary.uploader.upload(
-        dataUri,
-        {
-          folder: `vini-web-app/${type}`,
-          public_id: publicId,
-          resource_type: "image",
-        },
-        (err, res) => {
-          if (err) reject(err);
-          else if (res && "secure_url" in res) resolve(res as { secure_url: string });
-          else reject(new Error("Upload failed"));
-        }
-      );
+    const client = new S3Client({
+      region,
+      credentials: { accessKeyId, secretAccessKey },
     });
 
-    return NextResponse.json({ url: result.secure_url });
+    await client.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+        ACL: "public-read",
+      })
+    );
+
+    const url = getPublicUrl(bucket, region, key, publicBaseUrl);
+
+    return NextResponse.json({ url });
   } catch (err) {
     console.error("Upload error:", err);
     const message =
       err instanceof Error
         ? err.message
-        : typeof err === "object" && err !== null && "message" in err && typeof (err as { message: unknown }).message === "string"
+        : typeof err === "object" &&
+            err !== null &&
+            "message" in err &&
+            typeof (err as { message: unknown }).message === "string"
           ? (err as { message: string }).message
           : "Upload failed";
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
