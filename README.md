@@ -56,7 +56,7 @@ Copy `.env.example` to `.env` and fill in:
 - **S3_PUBLIC_BASE_URL** (optional) – Public base URL for uploaded images, e.g. `https://your-bucket.s3.region.amazonaws.com` or your CloudFront URL. If omitted, URLs are built as `https://{S3_BUCKET}.s3.{AWS_REGION}.amazonaws.com/{key}`.
 - **S3_IMAGE_HOSTNAME** (optional) – Hostname for Next.js Image optimization, e.g. `your-bucket.s3.us-east-1.amazonaws.com` or your CloudFront domain. Set this in Vercel (and locally for `next build`) so `next/image` can load S3 images.
 
-  **S3 bucket setup:** Create an S3 bucket, enable “Block public access” settings so that you can use object ACLs, then either set a bucket policy that allows public `GetObject`, or upload objects with ACL `public-read` (the app uses `public-read` on uploads).
+  **S3 bucket setup:** See **[docs/S3-SETUP.md](docs/S3-SETUP.md)** for a step-by-step guide (create bucket, permissions, IAM, env vars, testing). “Block public access” settings so that you can use object ACLs, then either set a bucket policy that allows public `GetObject`, or upload objects with ACL `public-read` (the app uses `public-read` on uploads).
 - **ADMIN_EMAIL**, **ADMIN_PASSWORD** – Credentials for admin dashboard login.
 - **JWT_SECRET** – Secret for signing session JWTs (min 32 characters). Required for dashboard auth.
 
