@@ -1,0 +1,3 @@
+# MongoDB Atlas connection string
+# Get this from your MongoDB Atlas cluster: Connect -> Drivers -> Node.js
+MONGODB_URI=mongodb+srv://alubaidullahi080_db_user:ZY5JX4Y8z1PjbOiK@cluster0.atfpuc6.mongodb.net/?appName=Cluster0

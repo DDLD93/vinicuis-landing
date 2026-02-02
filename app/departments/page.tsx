@@ -1,156 +1,94 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Shield,
-  Building2,
-  Laptop,
-  Scale,
-  DollarSign,
-  Target,
-  TrendingUp,
-  Users,
-} from 'lucide-react';
+import { motion } from "framer-motion";
+import { useInView } from "framer-motion";
+import { useRef } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { departments } from "@/data/departmentsData";
 
-export default function Departments() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
-  const departments = [
-    {
-      id: "security-logistics",
-      title: "Security & Logistics",
-      leadership: "Director of Security Logistics",
-      icon: Shield,
-      description: "Overseeing provision of security operations, logistics, defense procurement, armored vehicles, and more.",
-      image: "https://images.pexels.com/photos/8872465/pexels-photo-8872465.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      id: "corporate-services",
-      title: "Corporate Services & Information Management",
-      leadership: "Director",
-      icon: Building2,
-      description: "Responsible for governance processes, information systems, and administrative excellence.",
-      image: "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      id: "it",
-      title: "IT Department",
-      leadership: "IT Director",
-      icon: Laptop,
-      description: "Managing information technology infrastructure, systems development, and digital transformation initiatives.",
-      image: "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      id: "legal",
-      title: "Legal Department",
-      leadership: "General Counsel / Legal Officer",
-      icon: Scale,
-      description: "Providing legal oversight, contract management, and regulatory compliance.",
-      image: "https://images.pexels.com/photos/5668856/pexels-photo-5668856.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      id: "finance",
-      title: "Finance, Budget and Accounting",
-      leadership: "Director, Finance, Budget & Accounting",
-      icon: DollarSign,
-      description: "Financial reporting, treasury operations, budgeting, and audit controls.",
-      image: "https://images.pexels.com/photos/7688336/pexels-photo-7688336.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      id: "project-management",
-      title: "Project Management Office",
-      leadership: "Director of Project Management",
-      icon: Target,
-      description: "Overseeing planning, execution, and delivery across all organizational projects.",
-      image: "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      id: "business-development",
-      title: "Business Development",
-      leadership: "Business Development Officer",
-      icon: TrendingUp,
-      description: "Responsible for new market entries, partnerships, and investment strategy.",
-      image: "https://images.pexels.com/photos/3183153/pexels-photo-3183153.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      id: "hr",
-      title: "Human Resources",
-      leadership: "HR Director",
-      icon: Users,
-      description: "Managing talent acquisition, staff development, payroll, and organizational culture.",
-      image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-  ];
+export default function DepartmentsPage() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <div className="pt-[5.5rem]">
-      {/* Hero Section */}
-      <section className="py-20 gradient-bg text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center transition-all duration-1000 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Department <span className="text-red-400">Leadership</span>
-            </h1>
-            <p className="text-xl text-gray-200 max-w-3xl mx-auto">
-              Meet the dedicated professionals leading our specialized departments.
-            </p>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      
+      <main className="pt-24 pb-16">
+        {/* Hero Section */}
+        <section className="relative h-[60vh] overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src="/bg3.jpeg"
+              alt="Departments"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/70 to-background/80" />
           </div>
-        </div>
-      </section>
+          <div className="absolute inset-0 flex items-center z-10">
+            <div className="container">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-center max-w-3xl mx-auto"
+              >
+                <div className="divider-accent mx-auto" />
+                <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
+                  Department Leadership
+                </h1>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Meet the dedicated professionals leading our specialized departments.
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </section>
 
-      {/* Departments Grid */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {departments.map((dept, index) => {
-              const Icon = dept.icon;
-              return (
-                <motion.div
-                  key={dept.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="h-full hover:shadow-xl transition-all duration-300 border-gray-200 hover:border-red-200 group">
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={dept.image}
-                        alt={dept.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                      <div className="absolute top-4 left-4">
-                        <div className="bg-red-600 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                          <Icon className="h-6 w-6 text-white" />
-                        </div>
-                      </div>
+        {/* Departments Grid */}
+        <section className="section-padding" ref={ref}>
+          <div className="container">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {departments.map((dept, index) => {
+                const Icon = dept.icon;
+                return (
+                  <motion.div
+                    key={dept.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-card rounded-xl p-6 border border-border/50 hover:border-primary/30 hover:shadow-card transition-all group"
+                  >
+                    {/* Icon */}
+                    <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <Icon className="w-8 h-8 text-primary" />
                     </div>
-                    <CardHeader>
-                      <CardTitle className="text-xl text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
-                        {dept.title}
-                      </CardTitle>
-                      <CardDescription className="text-red-600 font-semibold">
-                        {dept.leadership}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-700 leading-relaxed">{dept.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
+
+                    {/* Title */}
+                    <h3 className="text-xl font-serif font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                      {dept.title}
+                    </h3>
+
+                    {/* Director */}
+                    <p className="text-sm font-semibold text-primary mb-3">
+                      {dept.director}
+                    </p>
+
+                    {/* Description */}
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {dept.description}
+                    </p>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
 }
