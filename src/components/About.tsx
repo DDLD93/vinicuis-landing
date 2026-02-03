@@ -12,8 +12,8 @@ const About = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" className="pt-16 sm:pt-20 pb-8 bg-secondary/30" ref={ref}>
-      <div className="container">
+    <section id="about" className="pt-14 sm:pt-16 md:pt-20 pb-8 sm:pb-10 bg-secondary/30 overflow-x-hidden" ref={ref}>
+      <div className="container px-4 sm:px-6">
         {/* About Header */}
         <div className="section-header">
           <motion.div
@@ -36,20 +36,20 @@ const About = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
               Vinicius Group is a premier African conglomerate and sovereign-scale
               industrial titan dedicated to the strategic advancement of Nigeria
               and the continent. With over 15 years of operational excellence and
               a significant asset base, we do not merely participate in markets;
               we define them.
             </p>
-            <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
               From establishing Nigeria&apos;s indigenous defense manufacturing
               capabilities to executing mega-infrastructure and digital
               transformation projects, Vinicius Group stands as the bridge
               between national ambition and realized capability.
             </p>
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
               We operate at the intersection of{" "}
               <span className="text-foreground font-semibold">
                 Security, Defense, Infrastructure, Technology, Aviation, and
@@ -95,27 +95,33 @@ const About = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <div className="grid lg:grid-cols-5 items-stretch">
-            {/* Image */}
-            <div className="lg:col-span-2 relative h-48 sm:h-56 md:h-64 lg:h-auto min-h-[12rem]">
-              <img
-                src={chairmanImage}
-                alt="Chairman"
-                className="w-full h-full object-cover object-top"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent lg:bg-gradient-to-r" />
+          <div className="grid lg:grid-cols-5 items-stretch gap-0">
+            {/* Image - portrait frame, shows face clearly */}
+            <div className="lg:col-span-2 relative flex justify-center lg:justify-end bg-muted/30">
+              <div className="w-full max-w-sm mx-auto lg:max-w-none lg:w-full lg:pr-0">
+                <div className="relative aspect-[3/4] min-h-[280px] sm:min-h-[320px] lg:aspect-auto lg:h-full lg:min-h-[380px]">
+                  <img
+                    src={chairmanImage}
+                    alt="Group Chairman"
+                    className="absolute inset-0 w-full h-full object-cover object-[center_top] rounded-none lg:rounded-l-2xl"
+                  />
+                  <div className="absolute inset-0 rounded-none lg:rounded-l-2xl bg-gradient-to-t from-foreground/30 via-transparent to-transparent lg:bg-gradient-to-r lg:from-foreground/20 lg:via-transparent lg:to-transparent" />
+                  {/* Accent bar */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/80 lg:bottom-0 lg:left-0 lg:right-auto lg:top-0 lg:h-full lg:w-1" />
+                </div>
+              </div>
             </div>
 
             {/* Quote */}
-            <div className="lg:col-span-3 p-5 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-center">
-              <Quote className="w-10 h-10 sm:w-12 sm:h-12 text-primary/20 mb-3 sm:mb-4" />
-              <blockquote className="text-lg sm:text-xl lg:text-2xl font-serif text-foreground leading-relaxed mb-4 sm:mb-6">
+            <div className="lg:col-span-3 p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 flex flex-col justify-center">
+              <Quote className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-primary/20 mb-3 sm:mb-4 shrink-0" />
+              <blockquote className="text-base sm:text-lg md:text-xl lg:text-2xl font-serif text-foreground leading-relaxed mb-4 sm:mb-6">
                 &quot;For over a decade and a half, Vinicius Group has evolved from a
                 vision of possibility into a pillar of national capability. Our
                 journey has been defined not just by the contracts we execute,
                 but by the value we create for Nigeria.&quot;
               </blockquote>
-              <p className="text-base sm:text-lg text-muted-foreground italic">
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground italic">
                 &quot;Whether it is securing our borders, building our cities, or
                 digitizing our government, our mandate remains clear:{" "}
                 <span className="text-primary font-semibold not-italic">

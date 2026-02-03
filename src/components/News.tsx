@@ -29,8 +29,8 @@ const News = ({ articles: articlesProp }: NewsProps) => {
   };
 
   return (
-    <section id="news" className="section-padding bg-secondary/30" ref={ref}>
-      <div className="container">
+    <section id="news" className="section-padding bg-secondary/30 overflow-x-hidden" ref={ref}>
+      <div className="container px-4 sm:px-6">
         {/* Section Header */}
         <div className="section-header">
           <motion.div
@@ -47,7 +47,7 @@ const News = ({ articles: articlesProp }: NewsProps) => {
         </div>
 
         {/* News Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
           {latestNews.map((article, index) => (
             <motion.div
               key={article.id}
@@ -109,10 +109,10 @@ const News = ({ articles: articlesProp }: NewsProps) => {
         >
           <Link
             href="/news"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg transition-all duration-300 hover:shadow-red hover:scale-[1.02]"
+            className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 min-h-[44px] bg-primary text-primary-foreground font-semibold rounded-lg transition-all duration-300 hover:shadow-red hover:scale-[1.02] touch-manipulation"
           >
             View All News
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </Link>
         </motion.div>
       </div>

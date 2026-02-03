@@ -43,8 +43,8 @@ const Gallery = ({ items: itemsProp }: GalleryProps) => {
   const goNext = () => setSelectedIndex((i) => (i >= totalImages - 1 ? 0 : i + 1));
 
   return (
-    <section id="gallery" className="section-padding" ref={ref}>
-      <div className="container">
+    <section id="gallery" className="section-padding overflow-x-hidden" ref={ref}>
+      <div className="container px-4 sm:px-6">
         {/* Section Header */}
         <div className="section-header">
           <motion.div
@@ -61,14 +61,14 @@ const Gallery = ({ items: itemsProp }: GalleryProps) => {
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {previewItems.slice(0, 3).map((item, index) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
-              className="relative group cursor-pointer overflow-hidden rounded-xl border border-border/50 hover:border-primary/30 hover:shadow-card transition-all"
+              className="relative group cursor-pointer overflow-hidden rounded-xl border border-border/50 hover:border-primary/30 hover:shadow-card transition-all touch-manipulation active:scale-[0.98]"
               onClick={() => openPreview(item)}
             >
               <div className="relative h-48 sm:h-64 overflow-hidden">
@@ -112,22 +112,22 @@ const Gallery = ({ items: itemsProp }: GalleryProps) => {
         >
           <Link
             href="/gallery"
-            className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg transition-all duration-300 hover:shadow-red hover:scale-[1.02] text-sm sm:text-base"
+            className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 min-h-[44px] bg-primary text-primary-foreground font-semibold rounded-lg transition-all duration-300 hover:shadow-red hover:scale-[1.02] text-sm sm:text-base touch-manipulation"
           >
             View Full Gallery
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </Link>
         </motion.div>
       </div>
 
       {/* Image preview modal */}
       <Dialog open={selectedItem !== null} onOpenChange={(open) => !open && closePreview()}>
-        <DialogContent className="w-[calc(100vw-2rem)] max-w-5xl p-0 bg-transparent border-0 overflow-visible max-h-[90dvh]">
+        <DialogContent className="w-[calc(100vw-1rem)] sm:w-[calc(100vw-2rem)] max-w-5xl p-0 bg-transparent border-0 overflow-visible max-h-[90dvh]">
           {selectedItem && lightboxUrls.length > 0 && (
             <div className="relative">
               <button
                 onClick={closePreview}
-                className="absolute top-4 right-4 z-10 w-10 h-10 bg-background/90 hover:bg-background rounded-full flex items-center justify-center transition-colors"
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 min-w-[44px] min-h-[44px] w-10 h-10 bg-background/90 hover:bg-background rounded-full flex items-center justify-center transition-colors touch-manipulation"
                 aria-label="Close"
               >
                 <X className="w-5 h-5 text-foreground" />
@@ -152,14 +152,14 @@ const Gallery = ({ items: itemsProp }: GalleryProps) => {
                 <>
                   <button
                     onClick={(e) => { e.stopPropagation(); goPrev(); }}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-background/90 hover:bg-background rounded-full flex items-center justify-center transition-colors"
+                    className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-10 min-w-[44px] min-h-[44px] w-10 h-10 bg-background/90 hover:bg-background rounded-full flex items-center justify-center transition-colors touch-manipulation"
                     aria-label="Previous image"
                   >
                     <ChevronLeft className="w-6 h-6 text-foreground" />
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); goNext(); }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-background/90 hover:bg-background rounded-full flex items-center justify-center transition-colors"
+                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-10 min-w-[44px] min-h-[44px] w-10 h-10 bg-background/90 hover:bg-background rounded-full flex items-center justify-center transition-colors touch-manipulation"
                     aria-label="Next image"
                   >
                     <ChevronRight className="w-6 h-6 text-foreground" />

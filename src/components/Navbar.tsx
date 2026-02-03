@@ -62,44 +62,46 @@ const Navbar = () => {
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    let rafId: number | null = null;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-      
-      // Determine active section - collect all anchor links from nav structure
-      const sections: string[] = [];
-      navStructure.forEach((item) => {
-        if ("items" in item) {
-          item.items.forEach((link) => {
-            if (link.type === "anchor" && link.href.startsWith("#")) {
-              sections.push(link.href.replace("#", ""));
+      if (rafId != null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        setIsScrolled(window.scrollY > 50);
+        const sections: string[] = [];
+        navStructure.forEach((item) => {
+          if ("items" in item) {
+            item.items.forEach((link) => {
+              if (link.type === "anchor" && link.href.startsWith("#")) {
+                sections.push(link.href.replace("#", ""));
+              }
+            });
+          } else if (item.type === "anchor" && item.href.startsWith("#")) {
+            sections.push(item.href.replace("#", ""));
+          }
+        });
+        const scrollPosition = window.scrollY + 100;
+        let found = "";
+        for (const section of sections) {
+          const element = document.getElementById(section);
+          if (element) {
+            const { offsetTop, offsetHeight } = element;
+            if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+              found = section;
+              break;
             }
-          });
-        } else if (item.type === "anchor" && item.href.startsWith("#")) {
-          sections.push(item.href.replace("#", ""));
-        }
-      });
-      
-      const scrollPosition = window.scrollY + 100;
-      
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
           }
         }
-      }
-      
-      if (window.scrollY < 100) {
-        setActiveSection("");
-      }
+        if (window.scrollY < 100) found = "";
+        setActiveSection(found);
+      });
     };
-    
     handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId != null) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Close mobile menu on scroll
@@ -177,7 +179,7 @@ const Navbar = () => {
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ${
         isScrolled
           ? "bg-gradient-to-r from-primary/95 via-red-900/95 to-primary/95 backdrop-blur-xl shadow-2xl shadow-primary/20 border-b border-primary/30"
           : "bg-transparent"
@@ -186,7 +188,7 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container flex items-center justify-between py-3 sm:py-4 min-h-[72px] sm:min-h-[88px] lg:min-h-0">
+      <div className="container flex items-center justify-between py-3 sm:py-4 min-h-[72px] sm:min-h-[88px] lg:min-h-0 px-4 sm:px-6">
         {/* Logo */}
         <motion.div
           whileHover={{ scale: 1.05 }}
@@ -226,17 +228,16 @@ const Navbar = () => {
                 <DropdownMenu key={item.label}>
                   <DropdownMenuTrigger asChild>
                     <button className={dropdownClassName}>
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 relative z-0">
                         {item.label}
                         <ChevronDown className="w-4 h-4" />
                       </span>
                       {isActive && (
-                        <motion.div
-                          className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+                        <span
+                          className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${
                             isScrolled ? "bg-white" : "bg-primary"
                           }`}
-                          layoutId={`activeDropdown-${item.label}`}
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          aria-hidden
                         />
                       )}
                       <span className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 ${
@@ -244,7 +245,7 @@ const Navbar = () => {
                       }`} />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuContent align="start" className="w-48" sideOffset={4}>
                     {item.items.map((link) => {
                       const linkIsActive = isLinkActive(link);
                       return link.type === "route" ? (
@@ -296,12 +297,11 @@ const Navbar = () => {
               <>
                 {link.name}
                 {isActive && (
-                  <motion.div
-                    className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+                  <span
+                    className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${
                       isScrolled ? "bg-white" : "bg-primary"
                     }`}
-                    layoutId={`activeLink-${link.name}`}
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    aria-hidden
                   />
                 )}
                 <span className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 ${
@@ -560,7 +560,7 @@ const Navbar = () => {
                 >
                   <Link
                     href="/contact"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-primary text-primary-foreground text-lg font-bold rounded-xl mt-6 transition-all duration-300 hover:shadow-red relative overflow-hidden group"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-4 min-h-[44px] bg-primary text-primary-foreground text-base sm:text-lg font-bold rounded-xl mt-6 transition-all duration-300 hover:shadow-red relative overflow-hidden group touch-manipulation"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span className="relative z-10">Get in Touch</span>

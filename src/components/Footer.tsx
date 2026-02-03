@@ -14,10 +14,10 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-foreground text-background" ref={ref}>
-      <div className="container py-12 sm:py-14 md:py-16">
+    <footer className="bg-foreground text-background overflow-x-hidden" ref={ref}>
+      <div className="container py-10 sm:py-14 md:py-16 px-4 sm:px-6">
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -72,7 +72,7 @@ const Footer = () => {
                 <li key={division}>
                   <a
                     href="#divisions"
-                    className="text-background/70 hover:text-primary transition-colors"
+                    className="flex items-center py-2.5 min-h-[44px] text-background/70 hover:text-primary transition-colors text-sm sm:text-base touch-manipulation"
                   >
                     {division}
                   </a>
@@ -94,11 +94,11 @@ const Footer = () => {
           </p>
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-2 text-sm text-background/70 hover:text-primary transition-colors"
+            className="flex items-center gap-2 min-h-[44px] px-3 py-2 text-sm text-background/70 hover:text-primary transition-colors touch-manipulation"
             aria-label="Back to top"
           >
             Back to Top
-            <ArrowUp className="w-4 h-4" />
+            <ArrowUp className="w-4 h-4 shrink-0" />
           </button>
         </motion.div>
       </div>

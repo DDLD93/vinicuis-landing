@@ -43,8 +43,8 @@ const WhyChooseUs = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="section-padding" ref={ref}>
-      <div className="container">
+    <section className="section-padding overflow-x-hidden" ref={ref}>
+      <div className="container px-4 sm:px-6">
         {/* Section Header */}
         <div className="section-header">
           <motion.div
@@ -61,7 +61,7 @@ const WhyChooseUs = () => {
         </div>
 
         {/* Reasons Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {reasons.map((reason, index) => (
             <motion.div
               key={reason.title}
@@ -84,8 +84,8 @@ const WhyChooseUs = () => {
         </div>
 
         {/* Financial Strength Banner */}
-        <motion.div
-          className="mt-10 sm:mt-16 relative overflow-hidden rounded-2xl bg-foreground text-background p-6 sm:p-8 lg:p-12"
+          <motion.div
+            className="mt-8 sm:mt-16 relative overflow-hidden rounded-xl sm:rounded-2xl bg-foreground text-background p-4 sm:p-6 md:p-8 lg:p-12"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -111,7 +111,7 @@ const WhyChooseUs = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
               {[
                 { value: "48hrs", label: "Mobilization Time" },
                 { value: "100%", label: "Project Continuity" },

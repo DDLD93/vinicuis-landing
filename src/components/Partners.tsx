@@ -51,8 +51,8 @@ const Partners = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="partners" className="section-padding bg-secondary/30" ref={ref}>
-      <div className="container">
+    <section id="partners" className="section-padding bg-secondary/30 overflow-x-hidden" ref={ref}>
+      <div className="container px-4 sm:px-6">
         {/* Section Header */}
         <div className="section-header">
           <motion.div
@@ -87,7 +87,7 @@ const Partners = () => {
             {[...partners, ...partners, ...partners].map((partner, index) => (
               <motion.div
                 key={`${partner.name}-${index}`}
-                className="bg-card rounded-lg p-4 text-center border border-border/50 hover:border-primary/30 hover:shadow-card transition-all group flex-shrink-0 w-[180px]"
+                className="bg-card rounded-lg p-3 sm:p-4 text-center border border-border/50 hover:border-primary/30 hover:shadow-card transition-all group flex-shrink-0 w-[140px] sm:w-[180px] min-w-[140px] sm:min-w-[180px] touch-manipulation"
                 whileHover={{ y: -3, scale: 1.02 }}
               >
                 {/* Logo */}
@@ -140,7 +140,7 @@ const Partners = () => {
               {[...globalPresence, ...globalPresence, ...globalPresence].map((item, index) => (
                 <motion.div
                   key={`${item.region}-${index}`}
-                  className="relative overflow-hidden rounded-xl bg-card p-5 border border-border/50 hover:border-primary/30 transition-all group flex-shrink-0 w-[250px]"
+                  className="relative overflow-hidden rounded-xl bg-card p-4 sm:p-5 border border-border/50 hover:border-primary/30 transition-all group flex-shrink-0 w-[200px] sm:w-[250px] min-w-[200px] sm:min-w-[250px] touch-manipulation"
                   whileHover={{ y: -3, scale: 1.02 }}
                 >
                   <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-bl-full" />

@@ -24,8 +24,8 @@ const Divisions = ({ divisions: divisionsFromDb }: DivisionsProps) => {
   const displayedDivisions = showAll ? divisions : divisions.slice(0, 3);
 
   return (
-    <section id="divisions" className="section-padding" ref={ref}>
-      <div className="container">
+    <section id="divisions" className="section-padding overflow-x-hidden" ref={ref}>
+      <div className="container px-4 sm:px-6">
         {/* Section Header */}
         <div className="section-header">
           <motion.div
@@ -85,10 +85,10 @@ const Divisions = ({ divisions: divisionsFromDb }: DivisionsProps) => {
                 </p>
                 <Link
                   href={`/divisions/${division.slug}`}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:gap-3 transition-all min-h-[44px] items-center touch-manipulation py-2"
                 >
                   Learn More
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 shrink-0" />
                 </Link>
               </div>
             </motion.div>

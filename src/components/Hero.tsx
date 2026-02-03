@@ -93,7 +93,7 @@ const Hero = () => {
   const slide = heroSlides[currentSlide];
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-[100dvh] flex items-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
@@ -101,7 +101,7 @@ const Hero = () => {
             key={`bg-${currentSlide}`}
             src={slide.image}
             alt={slide.tag}
-            className="w-full h-full"
+            className="w-full h-full object-cover"
             initial={{ scale: 1.1, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -119,7 +119,7 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="container relative z-10 py-16 sm:py-20 lg:py-32">
+      <div className="container relative z-10 py-12 sm:py-16 md:py-20 lg:py-32 px-4 sm:px-6">
         <div className="max-w-3xl">
           <AnimatePresence mode="wait">
             <motion.div
@@ -134,16 +134,16 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <div className="flex items-center gap-2 mb-6">
+                <div className="flex items-center gap-2 mb-4 sm:mb-6">
                   <div className="accent-line" />
-                  <span className="text-sm font-medium uppercase tracking-wider text-primary">
+                  <span className="text-xs sm:text-sm font-medium uppercase tracking-wider text-primary">
                     {slide.tag}
                   </span>
                 </div>
               </motion.div>
 
               <motion.h1
-                className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-6"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-4 sm:mb-6"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
@@ -155,7 +155,7 @@ const Hero = () => {
               </motion.h1>
 
               <motion.p
-                className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl"
+                className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mb-4 sm:mb-6 md:mb-8 max-w-2xl"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
@@ -164,16 +164,16 @@ const Hero = () => {
               </motion.p>
 
               <motion.div
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col sm:flex-row gap-3 sm:gap-4"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <a href="#divisions" className="btn-hero">
+                <a href="#divisions" className="btn-hero min-h-[44px] touch-manipulation">
                   {slide.cta.primary}
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 </a>
-                <a href="#contact" className="btn-outline-hero">
+                <a href="#contact" className="btn-outline-hero min-h-[44px] touch-manipulation">
                   {slide.cta.secondary}
                 </a>
               </motion.div>
@@ -277,7 +277,7 @@ const Hero = () => {
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 hidden sm:block"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}

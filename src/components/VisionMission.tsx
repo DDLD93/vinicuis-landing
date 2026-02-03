@@ -88,8 +88,8 @@ const VisionMission = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="pt-6 sm:pt-8 pb-12 sm:pb-20 bg-secondary/30" ref={ref}>
-      <div className="container">
+    <section className="pt-6 sm:pt-8 pb-10 sm:pb-20 bg-secondary/30 overflow-x-hidden" ref={ref}>
+      <div className="container px-4 sm:px-6">
         <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
           {/* Vision */}
           <motion.div
@@ -98,10 +98,10 @@ const VisionMission = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="accent-line mb-6" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-foreground mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-foreground mb-3 sm:mb-6">
               Our Vision
             </h2>
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-6 sm:mb-8">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed mb-4 sm:mb-8">
               To be a trusted African enterprise delivering world-class solutions
               that strengthen security, infrastructure, and economic growth
               through innovation, integrity, and strategic partnerships.
@@ -110,7 +110,7 @@ const VisionMission = () => {
               {visionItems.map((item, index) => (
                 <motion.div
                   key={item.title}
-                  className="flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-card border border-border/50 transition-all hover:shadow-card hover:border-primary/20"
+                  className="flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-card border border-border/50 transition-all hover:shadow-card hover:border-primary/20 min-h-[44px] touch-manipulation"
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
@@ -139,14 +139,14 @@ const VisionMission = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="accent-line mb-6" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-foreground mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-foreground mb-3 sm:mb-6">
               Our Mission
             </h2>
             <div className="grid gap-4">
               {missionItems.map((item, index) => (
                 <motion.div
                   key={item.title}
-                  className="flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-card border border-border/50 transition-all hover:shadow-card hover:border-primary/20"
+                  className="flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-card border border-border/50 transition-all hover:shadow-card hover:border-primary/20 min-h-[44px] touch-manipulation"
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
