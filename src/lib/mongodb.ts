@@ -1,13 +1,7 @@
 import mongoose from "mongoose";
 
-function getMongoUri(): string {
-  const uri = process.env.MONGODB_URI;
-  if (!uri) {
-    throw new Error(
-      "Please define the MONGODB_URI environment variable inside .env"
-    );
-  }
-  return uri;
+function getMongoUri(): string | null {
+  return process.env.MONGODB_URI ?? null;
 }
 
 interface MongooseCache {
@@ -26,12 +20,16 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 async function connect(): Promise<typeof mongoose> {
+  const uri = getMongoUri();
+  if (!uri) {
+    throw new Error("MONGODB_URI is not set");
+  }
   if (cached.conn) {
     return cached.conn;
   }
   if (!cached.promise) {
     const opts = { bufferCommands: false };
-    cached.promise = mongoose.connect(getMongoUri(), opts);
+    cached.promise = mongoose.connect(uri, opts);
   }
   try {
     cached.conn = await cached.promise;
