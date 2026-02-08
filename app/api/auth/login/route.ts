@@ -4,6 +4,7 @@ import { createToken, COOKIE_NAME, type UserRole } from "@/lib/auth";
 import { UserModel } from "@/lib/models/User";
 import { verifyPassword } from "@/lib/users";
 
+
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 function redirectToLogin(request: NextRequest, error: string) {
