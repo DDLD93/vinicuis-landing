@@ -9,7 +9,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "flagcdn.com", pathname: "/**" },
-      // S3: set S3_IMAGE_HOSTNAME to your bucket host, e.g. my-bucket.s3.us-east-1.amazonaws.com or CloudFront domain
+      // S3/MinIO: set S3_IMAGE_HOSTNAME (e.g. my-bucket.s3.us-east-1.amazonaws.com or minio.viniciusint.com) for next/image
       ...(process.env.S3_IMAGE_HOSTNAME
         ? [{ protocol: "https", hostname: process.env.S3_IMAGE_HOSTNAME, pathname: "/**" }]
         : []),

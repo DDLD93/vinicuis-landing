@@ -13,27 +13,45 @@ const extensionFromMime: Record<string, string> = {
   "image/gif": "gif",
 };
 
-function getPublicUrl(bucket: string, region: string, key: string, baseUrl?: string): string {
+function getPublicUrl(
+  bucket: string,
+  region: string,
+  key: string,
+  baseUrl?: string,
+  pathStyle = false
+): string {
   if (baseUrl) {
     const base = baseUrl.replace(/\/$/, "");
+    if (pathStyle) return `${base}/${bucket}/${key}`;
     return `${base}/${key}`;
   }
   return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
 }
 
+/** Parse custom endpoint (e.g. https://minio.viniciusint.com) to hostname for S3Client */
+function getEndpointHost(s3Url: string): string {
+  try {
+    const u = new URL(s3Url.startsWith("http") ? s3Url : `https://${s3Url}`);
+    return u.origin;
+  } catch {
+    return "";
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const bucket = process.env.S3_BUCKET;
-    const region = process.env.AWS_REGION;
+    const region = process.env.AWS_REGION || "us-east-1";
     const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
     const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-    const publicBaseUrl = process.env.S3_PUBLIC_BASE_URL; // optional, e.g. CloudFront URL
+    const s3Url = process.env.S3_URL; // optional custom endpoint (e.g. MinIO: https://minio.viniciusint.com)
+    const publicBaseUrl = process.env.S3_PUBLIC_BASE_URL || s3Url; // public URL for image links
 
-    if (!bucket || !region || !accessKeyId || !secretAccessKey) {
+    if (!bucket || !accessKeyId || !secretAccessKey) {
       return NextResponse.json(
         {
           error:
-            "S3 is not configured. Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, and S3_BUCKET.",
+            "S3 is not configured. Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and S3_BUCKET. Optionally AWS_REGION and S3_URL for custom endpoints (e.g. MinIO).",
         },
         { status: 500 }
       );
@@ -80,9 +98,13 @@ export async function POST(request: NextRequest) {
         : "jpg");
     const key = `vini-web-app/${type}/${Date.now()}-${Math.random().toString(36).slice(2, 9)}.${ext}`;
 
+    const endpoint = s3Url ? getEndpointHost(s3Url) : undefined;
     const client = new S3Client({
       region,
       credentials: { accessKeyId, secretAccessKey },
+      ...(endpoint
+        ? { endpoint, forcePathStyle: true }
+        : {}),
     });
 
     await client.send(
@@ -95,7 +117,13 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    const url = getPublicUrl(bucket, region, key, publicBaseUrl);
+    const url = getPublicUrl(
+      bucket,
+      region,
+      key,
+      publicBaseUrl || undefined,
+      !!endpoint
+    );
 
     return NextResponse.json({ url });
   } catch (err) {
