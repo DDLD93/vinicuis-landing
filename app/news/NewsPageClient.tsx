@@ -16,6 +16,7 @@ interface NewsPageClientProps {
 export default function NewsPageClient({ articles }: NewsPageClientProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const list = Array.isArray(articles) ? articles : [];
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -65,8 +66,11 @@ export default function NewsPageClient({ articles }: NewsPageClientProps) {
         {/* News Grid */}
         <section className="section-padding" ref={ref}>
           <div className="container">
+            {list.length === 0 ? (
+              <p className="text-center text-muted-foreground py-12">No news articles yet. Check back soon.</p>
+            ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-              {articles.map((article, index) => (
+              {list.map((article, index) => (
                 <motion.div
                   key={article.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -110,6 +114,7 @@ export default function NewsPageClient({ articles }: NewsPageClientProps) {
                 </motion.div>
               ))}
             </div>
+            )}
           </div>
         </section>
       </main>

@@ -17,19 +17,20 @@ import type { GalleryItem } from "@/lib/models/Gallery";
 export const revalidate = 60;
 
 export default async function Home() {
-  let newsArticles: NewsArticle[];
-  let galleryItems: GalleryItem[];
-  let divisions: Awaited<ReturnType<typeof getDivisions>>;
+  let newsArticles: NewsArticle[] = [];
+  let galleryItems: GalleryItem[] = [];
+  let divisions: Awaited<ReturnType<typeof getDivisions>> = [];
   try {
-    [newsArticles, galleryItems, divisions] = await Promise.all([
+    const [news, gallery, divs] = await Promise.all([
       getNewsArticles({ limit: 3, sort: "desc" }),
       getGalleryItems({ limit: 6 }),
       getDivisions(),
     ]);
+    newsArticles = Array.isArray(news) ? news : [];
+    galleryItems = Array.isArray(gallery) ? gallery : [];
+    divisions = Array.isArray(divs) ? divs : [];
   } catch {
-    newsArticles = [];
-    galleryItems = [];
-    divisions = [];
+    // keep defaults
   }
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">

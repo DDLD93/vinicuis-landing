@@ -10,7 +10,11 @@ export async function getNewsArticles(options?: {
   limit?: number;
   sort?: "asc" | "desc";
 }): Promise<NewsArticle[]> {
-  await connect();
+  try {
+    await connect();
+  } catch {
+    return [];
+  }
   const sortOrder = options?.sort === "asc" ? 1 : -1;
   const query = NewsModel.find().sort({ date: sortOrder });
   if (options?.limit) {
@@ -30,7 +34,11 @@ export async function getNewsArticles(options?: {
 }
 
 export async function getNewsArticleById(id: string): Promise<NewsArticle | null> {
-  await connect();
+  try {
+    await connect();
+  } catch {
+    return null;
+  }
   const mongoose = await import("mongoose");
   const ObjectId = mongoose.default.Types.ObjectId;
   if (!ObjectId.isValid(id)) return null;

@@ -27,13 +27,14 @@ export default function GalleryPageClient({ items }: GalleryPageClientProps) {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const categories = Array.from(new Set(items.map((item) => item.category)));
+  const list = Array.isArray(items) ? items : [];
+  const categories = Array.from(new Set(list.map((item) => item.category)));
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   const filteredItems =
     selectedCategory === "All"
-      ? items
-      : items.filter((item) => item.category === selectedCategory);
+      ? list
+      : list.filter((item) => item.category === selectedCategory);
 
   const openLightbox = (item: GalleryItem) => {
     setSelectedItem(item);
@@ -88,6 +89,7 @@ export default function GalleryPageClient({ items }: GalleryPageClientProps) {
           </div>
         </section>
 
+        {list.length > 0 && (
         <section className="pt-8 pb-4">
           <div className="container">
             <motion.div
@@ -122,9 +124,13 @@ export default function GalleryPageClient({ items }: GalleryPageClientProps) {
             </motion.div>
           </div>
         </section>
+        )}
 
         <section className="section-padding" ref={ref}>
           <div className="container">
+            {filteredItems.length === 0 ? (
+              <p className="text-center text-muted-foreground py-12">No gallery items yet. Check back soon.</p>
+            ) : (
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedCategory}
@@ -174,6 +180,7 @@ export default function GalleryPageClient({ items }: GalleryPageClientProps) {
                 })}
               </motion.div>
             </AnimatePresence>
+            )}
           </div>
         </section>
       </main>

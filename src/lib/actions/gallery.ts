@@ -13,7 +13,11 @@ import { createAuditEntry } from "@/lib/actions/audit";
 export async function getGalleryItems(options?: {
   limit?: number;
 }): Promise<GalleryItem[]> {
-  await connect();
+  try {
+    await connect();
+  } catch {
+    return [];
+  }
   const query = GalleryModel.find().sort({ createdAt: -1 });
   if (options?.limit) {
     query.limit(options.limit);
@@ -34,7 +38,11 @@ export async function getGalleryItems(options?: {
 export async function getGalleryItemById(
   id: string
 ): Promise<GalleryItem | null> {
-  await connect();
+  try {
+    await connect();
+  } catch {
+    return null;
+  }
   const mongoose = await import("mongoose");
   const ObjectId = mongoose.default.Types.ObjectId;
   if (!ObjectId.isValid(id)) return null;

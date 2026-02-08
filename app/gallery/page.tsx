@@ -1,5 +1,6 @@
 import { getGalleryItems } from "@/lib/actions/gallery";
 import GalleryPageClient from "./GalleryPageClient";
+import type { GalleryItem } from "@/lib/models/Gallery";
 
 export const revalidate = 60;
 
@@ -9,9 +10,10 @@ export const metadata = {
 };
 
 export default async function GalleryPage() {
-  let items;
+  let items: GalleryItem[] = [];
   try {
-    items = await getGalleryItems();
+    const data = await getGalleryItems();
+    items = Array.isArray(data) ? data : [];
   } catch {
     items = [];
   }

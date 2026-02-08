@@ -1,5 +1,6 @@
 import { getNewsArticles } from "@/lib/actions/news";
 import NewsPageClient from "./NewsPageClient";
+import type { NewsArticle } from "@/lib/models/News";
 
 export const revalidate = 60;
 
@@ -9,9 +10,10 @@ export const metadata = {
 };
 
 export default async function NewsPage() {
-  let articles;
+  let articles: NewsArticle[] = [];
   try {
-    articles = await getNewsArticles({ sort: "desc" });
+    const data = await getNewsArticles({ sort: "desc" });
+    articles = Array.isArray(data) ? data : [];
   } catch {
     articles = [];
   }

@@ -14,7 +14,11 @@ import { createAuditEntry } from "@/lib/actions/audit";
 export async function getDivisions(options?: {
   limit?: number;
 }): Promise<Division[]> {
-  await connect();
+  try {
+    await connect();
+  } catch {
+    return [];
+  }
   const query = DivisionModel.find().sort({ createdAt: 1 });
   if (options?.limit) {
     query.limit(options.limit);
