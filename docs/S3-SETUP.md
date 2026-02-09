@@ -108,6 +108,8 @@ S3_IMAGE_HOSTNAME=vinicius-web-uploads.s3.us-east-1.amazonaws.com
 
 5. Save the file.
 
+**Using MinIO or another S3-compatible endpoint:** Set `S3_URL` to your endpoint (e.g. `https://minio.example.com`). The app will use path-style URLs and this endpoint for uploads. Set `S3_PUBLIC_BASE_URL` to the public URL where objects are readable (e.g. the same MinIO URL or a reverse proxy). `AWS_REGION` can be any value (e.g. `us-east-1`) when using a custom endpoint.
+
 ---
 
 ## Step 6: Set environment variables on Vercel (if you deploy there)
@@ -155,7 +157,7 @@ npm run dev
 
 | Problem | What to check |
 |--------|----------------|
-| “S3 is not configured” | All four vars set: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_BUCKET`. Restart `npm run dev` after changing `.env.local`. |
+| “S3 is not configured” | Set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `S3_BUCKET`. For AWS S3 also set `AWS_REGION`. For MinIO set `S3_URL`. Restart `npm run dev` after changing `.env.local`. |
 | “Access Denied” on upload | IAM user has `PutObject` (and `PutObjectAcl` if using ACLs) on the bucket/prefix `vini-web-app/*`. |
 | Image URL returns 403 | Public read: either ACL `public-read` (Option A) or bucket policy (Option B) for `vini-web-app/*`. |
 | Next.js Image broken for S3 URLs | Set `S3_IMAGE_HOSTNAME` to your bucket host (e.g. `bucket.s3.region.amazonaws.com`) or CloudFront domain, and redeploy. |
