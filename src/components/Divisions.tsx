@@ -5,7 +5,6 @@ import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { ArrowRight, ChevronDown, Shield, Building2, Plane, Server, Car, Wheat, Pill, Trophy } from "lucide-react";
 import Link from "next/link";
-import { divisions as staticDivisions } from "@/data/divisionsData";
 import type { Division } from "@/lib/models/Division";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -20,7 +19,7 @@ const Divisions = ({ divisions: divisionsFromDb }: DivisionsProps) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [showAll, setShowAll] = useState(false);
-  const divisions = (divisionsFromDb?.length ? divisionsFromDb : staticDivisions) as (Division & { icon?: string | React.ComponentType<{ className?: string }> })[];
+  const divisions = (divisionsFromDb ?? []) as (Division & { icon?: string | React.ComponentType<{ className?: string }> })[];
   const displayedDivisions = showAll ? divisions : divisions.slice(0, 3);
 
   return (

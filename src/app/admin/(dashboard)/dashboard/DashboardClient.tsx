@@ -13,18 +13,20 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import Link from "next/link";
-import { divisions } from "@/data/divisionsData";
 import type { NewsArticle } from "@/lib/models/News";
 import type { GalleryItem } from "@/lib/models/Gallery";
+import type { Division } from "@/lib/models/Division";
 
 interface DashboardClientProps {
   newsArticles: NewsArticle[];
   galleryItems: GalleryItem[];
+  divisions: Division[];
 }
 
 export default function DashboardClient({
   newsArticles,
   galleryItems,
+  divisions,
 }: DashboardClientProps) {
   const greeting =
     new Date().getHours() < 12
@@ -57,7 +59,7 @@ export default function DashboardClient({
     },
     {
       label: "Divisions",
-      value: divisions.length,
+      value: divisions?.length ?? 0,
       icon: Building2,
       href: "/admin/divisions",
       gradient: "from-emerald-500/20 to-emerald-600/5",

@@ -26,6 +26,11 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 async function connect(): Promise<typeof mongoose> {
+  const uriCurrentlySet = typeof process.env.MONGODB_URI === "string" && process.env.MONGODB_URI.length > 0;
+  if (cached.conn && !uriCurrentlySet) {
+    cached.conn = null;
+    cached.promise = null;
+  }
   if (cached.conn) {
     return cached.conn;
   }

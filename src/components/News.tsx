@@ -5,7 +5,6 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { Calendar, Tag, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { newsArticles as fallbackArticles } from "@/data/newsData";
 import type { NewsArticle } from "@/lib/models/News";
 
 interface NewsProps {
@@ -16,7 +15,7 @@ const News = ({ articles: articlesProp }: NewsProps) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const articles = articlesProp ?? fallbackArticles;
+  const articles = articlesProp ?? [];
   const latestNews = articles.slice(0, 3);
 
   const formatDate = (dateString: string) => {

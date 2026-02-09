@@ -10,7 +10,6 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
-import { galleryItems as fallbackItems } from "@/data/galleryData";
 import type { GalleryItem } from "@/lib/models/Gallery";
 
 function getItemUrls(item: GalleryItem): string[] {
@@ -27,7 +26,7 @@ const Gallery = ({ items: itemsProp }: GalleryProps) => {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const items = itemsProp ?? fallbackItems;
+  const items = itemsProp ?? [];
   const previewItems = items.slice(0, 6);
   const lightboxUrls = selectedItem ? getItemUrls(selectedItem) : [];
   const totalImages = lightboxUrls.length;
