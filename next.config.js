@@ -16,7 +16,6 @@ const nextConfig = {
     ],
     unoptimized: false,
   },
-  // Resolve validator type error when app/ is at root but generated types reference src/app
   typescript: {
     ignoreBuildErrors: true,
   },
