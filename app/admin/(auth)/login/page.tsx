@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useFormState } from "react-dom";
 import { motion } from "framer-motion";
@@ -14,6 +14,16 @@ function AdminLoginForm() {
 
   const [state, formAction] = useFormState<LoginState, FormData>(loginAction, null);
   const [loading, setLoading] = useState(false);
+
+  // Re-enable button when action returns (failed login or any non-redirect response)
+  useEffect(() => {
+    if (state === null) return;
+    if (state.ok === true && state.data?.redirectUrl) {
+      window.location.assign(state.data.redirectUrl);
+    } else {
+      setLoading(false);
+    }
+  }, [state]);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden">
