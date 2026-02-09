@@ -67,7 +67,6 @@ export default function NewsPageClient({ articles }: NewsPageClientProps) {
           <div className="container">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {articles.map((article, index) => (
-                console.log(article),
                 <motion.div
                   key={article.id}
                   initial={{ opacity: 0, y: 30 }}
