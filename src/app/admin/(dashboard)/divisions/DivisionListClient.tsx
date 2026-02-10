@@ -102,36 +102,39 @@ export default function DivisionListClient({
     id: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
 
-  const handleImageUpload = async (file: File) => {
+  const handleImageSelect = (file: File) => {
     if (!file.type.startsWith("image/")) return;
-    const objectUrl = URL.createObjectURL(file);
     setImagePreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
-      return objectUrl;
+      return URL.createObjectURL(file);
     });
-    setIsUploading(true);
-    try {
-      const form = new FormData();
-      form.append("image", file);
-      form.append("type", "division");
-      const res = await fetch("/api/upload", { method: "POST", body: form });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Upload failed");
-      }
-      const data = await res.json();
-      setFormData((prev) => ({ ...prev, image: data.url }));
-      setImagePreviewUrl((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return null;
-      });
-    } finally {
-      setIsUploading(false);
+    setPendingImageFile(file);
+    setFormData((prev) => ({ ...prev, image: "" }));
+  };
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const form = new FormData();
+    form.append("image", file);
+    form.append("type", "division");
+    const res = await fetch("/api/upload", { method: "POST", body: form });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "Upload failed");
     }
+    const data = await res.json();
+    return data.url;
+  };
+
+  const clearImagePreview = () => {
+    setImagePreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    setPendingImageFile(null);
   };
 
   const filteredDivisions = divisions.filter(
@@ -143,7 +146,7 @@ export default function DivisionListClient({
 
   const handleCreateOpen = () => {
     setError(null);
-    setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+    clearImagePreview();
     setFormData({
       ...emptyDivision,
       detailedContent: { ...emptyDetailedContent },
@@ -154,7 +157,7 @@ export default function DivisionListClient({
 
   const handleEditOpen = (division: Division) => {
     setError(null);
-    setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+    clearImagePreview();
     setFormData({
       ...division,
       detailedContent: {
@@ -221,13 +224,28 @@ export default function DivisionListClient({
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setIsSubmitting(true);
+    let imageUrl = formData.image;
+    if (pendingImageFile) {
+      setIsSubmitting(true);
+      try {
+        imageUrl = await uploadImage(pendingImageFile);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Upload failed");
+        setIsSubmitting(false);
+        return;
+      }
+    } else if (!formData.image) {
+      setError("Image is required.");
+      return;
+    } else {
+      setIsSubmitting(true);
+    }
     const result = await createDivision({
       slug: formData.slug,
       title: formData.title,
       subtitle: formData.subtitle,
       description: formData.description,
-      image: formData.image,
+      image: imageUrl,
       icon: formData.icon,
       detailedContent: {
         headline: formData.detailedContent.headline,
@@ -239,6 +257,7 @@ export default function DivisionListClient({
     });
     setIsSubmitting(false);
     if (result.success) {
+      clearImagePreview();
       setCreateOpen(false);
       startTransition(() => router.refresh());
       toast({ title: "Success", description: "Division created." });
@@ -251,13 +270,25 @@ export default function DivisionListClient({
     e.preventDefault();
     if (!editDivision) return;
     setError(null);
-    setIsSubmitting(true);
+    let imageUrl = formData.image;
+    if (pendingImageFile) {
+      setIsSubmitting(true);
+      try {
+        imageUrl = await uploadImage(pendingImageFile);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Upload failed");
+        setIsSubmitting(false);
+        return;
+      }
+    } else {
+      setIsSubmitting(true);
+    }
     const result = await updateDivision(editDivision.id, {
       slug: formData.slug,
       title: formData.title,
       subtitle: formData.subtitle,
       description: formData.description,
-      image: formData.image,
+      image: imageUrl,
       icon: formData.icon,
       detailedContent: {
         headline: formData.detailedContent.headline,
@@ -269,6 +300,7 @@ export default function DivisionListClient({
     });
     setIsSubmitting(false);
     if (result.success) {
+      clearImagePreview();
       setEditDivision(null);
       startTransition(() => router.refresh());
       toast({ title: "Success", description: "Division updated." });
@@ -351,11 +383,13 @@ export default function DivisionListClient({
           className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) handleImageUpload(file);
+            if (file) handleImageSelect(file);
+            e.target.value = "";
           }}
-          disabled={isUploading}
         />
-        {isUploading && <p className="text-xs text-slate-500 mt-1">Uploading...</p>}
+        {!formData.image && !imagePreviewUrl && (
+          <p className="text-xs text-slate-500 mt-1">Image uploads when you save.</p>
+        )}
       </div>
       <div>
         <label className="block text-sm font-medium text-slate-900 dark:text-white mb-1">Icon *</label>
@@ -536,7 +570,7 @@ export default function DivisionListClient({
       <Dialog
         open={createOpen}
         onOpenChange={(open) => {
-          if (!open) setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+          if (!open) clearImagePreview();
           setCreateOpen(open);
         }}
       >
@@ -545,8 +579,8 @@ export default function DivisionListClient({
           <form onSubmit={handleCreateSubmit} className="space-y-4">
             {renderFormFields(false)}
             <DialogFooter>
-              <button type="button" onClick={() => { setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; }); setCreateOpen(false); }} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
-              <button type="submit" disabled={isSubmitting || !formData.image} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50">
+              <button type="button" onClick={() => { clearImagePreview(); setCreateOpen(false); }} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+              <button type="submit" disabled={isSubmitting || (!formData.image && !pendingImageFile)} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50">
                 <Save className="w-4 h-4" /> {isSubmitting ? "Saving..." : "Save"}
               </button>
             </DialogFooter>
@@ -559,7 +593,7 @@ export default function DivisionListClient({
         open={!!editDivision}
         onOpenChange={(open) => {
           if (!open) {
-            setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+            clearImagePreview();
             setEditDivision(null);
           }
         }}
@@ -569,8 +603,8 @@ export default function DivisionListClient({
           <form onSubmit={handleEditSubmit} className="space-y-4">
             {renderFormFields(true)}
             <DialogFooter>
-              <button type="button" onClick={() => { setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; }); setEditDivision(null); }} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
-              <button type="submit" disabled={isSubmitting} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50">
+              <button type="button" onClick={() => { clearImagePreview(); setEditDivision(null); }} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+              <button type="submit" disabled={isSubmitting || (!formData.image && !pendingImageFile)} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50">
                 <Save className="w-4 h-4" /> {isSubmitting ? "Saving..." : "Update"}
               </button>
             </DialogFooter>

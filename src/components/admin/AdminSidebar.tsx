@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Newspaper, Image as ImageIcon, LogOut, Building2, Briefcase, Users, X, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Newspaper, Image as ImageIcon, LogOut, Building2, Briefcase, Users, X, ClipboardList, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
@@ -122,8 +122,16 @@ export default function AdminSidebar({ open = false, onClose }: AdminSidebarProp
           })}
         </nav>
 
-        {/* Logout Button */}
-        <div className="border-t border-slate-800 p-4">
+        {/* View site + Logout */}
+        <div className="border-t border-slate-800 p-4 space-y-1">
+          <Link
+            href="/"
+            onClick={() => onClose?.()}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Home className="h-4 w-4 shrink-0" />
+            <span>View site</span>
+          </Link>
           <button
             onClick={() => setLogoutOpen(true)}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-red-900/20 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"

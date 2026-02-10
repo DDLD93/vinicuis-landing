@@ -33,6 +33,10 @@ const MAX_GALLERY_IMAGES = 20;
 // Must stay under Vercel serverless request body limit (~4.5MB)
 const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
 
+type ImageListItem =
+  | { type: "url"; url: string }
+  | { type: "file"; file: File; previewUrl: string };
+
 const CATEGORIES = [
   "Defense & Security",
   "Infrastructure",
@@ -72,9 +76,8 @@ export default function GalleryListClient({
     id: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [imageList, setImageList] = useState<ImageListItem[]>([]);
 
   const uploadOneFile = async (file: File): Promise<string> => {
     if (file.size > MAX_FILE_SIZE) {
@@ -95,44 +98,7 @@ export default function GalleryListClient({
     return data.url;
   };
 
-  const handleImageUpload = async (file: File) => {
-    if (!file.type.startsWith("image/")) return;
-    if (file.size > MAX_FILE_SIZE) {
-      toast({
-        title: "File too large",
-        description: "Max 4MB per image. Use a smaller or compressed image.",
-        variant: "destructive",
-      });
-      return;
-    }
-    const currentCount = formData.images?.length ?? (formData.image ? 1 : 0);
-    if (currentCount >= MAX_GALLERY_IMAGES) {
-      toast({
-        title: "Maximum images reached",
-        description: `You can add up to ${MAX_GALLERY_IMAGES} images per item.`,
-        variant: "destructive",
-      });
-      return;
-    }
-    setIsUploading(true);
-    try {
-      const url = await uploadOneFile(file);
-      setFormData((prev) => {
-        const images = [...(prev.images ?? (prev.image ? [prev.image] : [])), url];
-        return { ...prev, images, image: images[0] };
-      });
-    } catch (err) {
-      toast({
-        title: "Upload failed",
-        description: err instanceof Error ? err.message : "Could not upload image",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleMultipleImageUpload = async (fileList: FileList | null) => {
+  const addFilesToImageList = (fileList: FileList | null) => {
     if (!fileList?.length) return;
     const files = Array.from(fileList).filter((f) => f.type.startsWith("image/"));
     if (!files.length) {
@@ -148,7 +114,7 @@ export default function GalleryListClient({
         variant: "destructive",
       });
     }
-    const currentCount = formData.images?.length ?? (formData.image ? 1 : 0);
+    const currentCount = imageList.length;
     if (currentCount >= MAX_GALLERY_IMAGES) {
       toast({
         title: "Maximum images reached",
@@ -158,7 +124,7 @@ export default function GalleryListClient({
       return;
     }
     const remaining = MAX_GALLERY_IMAGES - currentCount;
-    const toUpload = underSize.slice(0, remaining);
+    const toAdd = underSize.slice(0, remaining);
     if (underSize.length > remaining) {
       toast({
         title: "Some images skipped",
@@ -166,50 +132,45 @@ export default function GalleryListClient({
         variant: "destructive",
       });
     }
-    setIsUploading(true);
-    try {
-      const newUrls: string[] = [];
-      for (const file of toUpload) {
-        const url = await uploadOneFile(file);
-        newUrls.push(url);
+    setImageList((prev) => {
+      const next = [...prev];
+      for (const file of toAdd) {
+        next.push({ type: "file", file, previewUrl: URL.createObjectURL(file) });
       }
-      if (newUrls.length) {
-        setFormData((prev) => {
-          const images = [...(prev.images ?? (prev.image ? [prev.image] : [])), ...newUrls];
-          return { ...prev, images, image: images[0] };
-        });
-      }
-    } catch (err) {
-      toast({
-        title: "Upload failed",
-        description: err instanceof Error ? err.message : "Could not upload image(s)",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUploading(false);
-    }
+      return next;
+    });
   };
 
   const removeImageAt = (index: number) => {
-    setFormData((prev) => {
-      const images = (prev.images ?? (prev.image ? [prev.image] : [])).filter((_, i) => i !== index);
-      return { ...prev, images, image: images[0] ?? "" };
+    setImageList((prev) => {
+      const entry = prev[index];
+      if (entry?.type === "file") URL.revokeObjectURL(entry.previewUrl);
+      return prev.filter((_, i) => i !== index);
     });
   };
 
   const moveImage = (index: number, direction: "up" | "down") => {
-    setFormData((prev) => {
-      const list = prev.images ?? (prev.image ? [prev.image] : []);
-      if (list.length < 2) return prev;
-      const next = [...list];
+    setImageList((prev) => {
+      if (prev.length < 2) return prev;
+      const next = [...prev];
       const j = direction === "up" ? index - 1 : index + 1;
       if (j < 0 || j >= next.length) return prev;
       [next[index], next[j]] = [next[j], next[index]];
-      return { ...prev, images: next, image: next[0] };
+      return next;
     });
   };
 
-  const formImages = formData.images?.length ? formData.images : formData.image ? [formData.image] : [];
+  const revokeAllFilePreviews = () => {
+    setImageList((prev) => {
+      prev.forEach((entry) => {
+        if (entry.type === "file") URL.revokeObjectURL(entry.previewUrl);
+      });
+      return [];
+    });
+  };
+
+  const getPreviewSrc = (entry: ImageListItem) =>
+    entry.type === "url" ? entry.url : entry.previewUrl;
 
   const filteredItems = items.filter(
     (item) =>
@@ -222,17 +183,18 @@ export default function GalleryListClient({
 
   const handleCreateOpen = () => {
     setError(null);
-    setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+    revokeAllFilePreviews();
+    setImageList([]);
     setFormData({ ...emptyItem, id: "" });
     setCreateOpen(true);
   };
 
   const handleEditOpen = (item: GalleryItem) => {
     setError(null);
-    setFormData({
-      ...item,
-      images: item.images ?? (item.image ? [item.image] : []),
-    });
+    revokeAllFilePreviews();
+    const existing = item.images?.length ? item.images : item.image ? [item.image] : [];
+    setImageList(existing.map((url) => ({ type: "url" as const, url })));
+    setFormData({ ...item, images: existing, image: existing[0] ?? "" });
     setEditItem(item);
   };
 
@@ -245,33 +207,58 @@ export default function GalleryListClient({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const resolveImageListToUrls = async (): Promise<string[]> => {
+    const urls: string[] = [];
+    for (const entry of imageList) {
+      if (entry.type === "url") {
+        urls.push(entry.url);
+      } else {
+        const url = await uploadOneFile(entry.file);
+        urls.push(url);
+      }
+    }
+    return urls;
+  };
+
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    const images = formData.images?.length ? formData.images : formData.image ? [formData.image] : [];
-    if (!images.length) {
+    if (imageList.length === 0) {
       setError("At least one image is required.");
       return;
     }
-    if (images.length > MAX_GALLERY_IMAGES) {
+    if (imageList.length > MAX_GALLERY_IMAGES) {
       setError(`Maximum ${MAX_GALLERY_IMAGES} images allowed per item.`);
       return;
     }
     setIsSubmitting(true);
-    const result = await createGalleryItem({
-      title: formData.title,
-      category: formData.category,
-      image: images[0],
-      images,
-      description: formData.description ?? "",
-    });
-    setIsSubmitting(false);
-    if (result.success) {
-      setCreateOpen(false);
-      startTransition(() => router.refresh());
-      toast({ title: "Success", description: "Gallery item created." });
-    } else {
-      setError("error" in result ? result.error : "Failed to create");
+    try {
+      const resolvedUrls = await resolveImageListToUrls();
+      const result = await createGalleryItem({
+        title: formData.title,
+        category: formData.category,
+        image: resolvedUrls[0],
+        images: resolvedUrls,
+        description: formData.description ?? "",
+      });
+      if (result.success) {
+        revokeAllFilePreviews();
+        setImageList([]);
+        setCreateOpen(false);
+        startTransition(() => router.refresh());
+        toast({ title: "Success", description: "Gallery item created." });
+      } else {
+        setError("error" in result ? result.error : "Failed to create");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
+      toast({
+        title: "Upload failed",
+        description: err instanceof Error ? err.message : "Could not upload image(s)",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -279,29 +266,42 @@ export default function GalleryListClient({
     e.preventDefault();
     if (!editItem) return;
     setError(null);
-    const images = formData.images?.length ? formData.images : formData.image ? [formData.image] : [];
-    if (!images.length) {
+    if (imageList.length === 0) {
       setError("At least one image is required.");
       return;
     }
-    if (images.length > MAX_GALLERY_IMAGES) {
+    if (imageList.length > MAX_GALLERY_IMAGES) {
       setError(`Maximum ${MAX_GALLERY_IMAGES} images allowed per item.`);
       return;
     }
     setIsSubmitting(true);
-    const result = await updateGalleryItem(editItem.id, {
-      title: formData.title,
-      category: formData.category,
-      image: images[0],
-      images,
-      description: formData.description ?? "",
-    });
-    setIsSubmitting(false);
-    if (result.success) {
-      setEditItem(null);
-      router.refresh();
-    } else {
-      setError("error" in result ? result.error : "Failed to update");
+    try {
+      const resolvedUrls = await resolveImageListToUrls();
+      const result = await updateGalleryItem(editItem.id, {
+        title: formData.title,
+        category: formData.category,
+        image: resolvedUrls[0],
+        images: resolvedUrls,
+        description: formData.description ?? "",
+      });
+      if (result.success) {
+        revokeAllFilePreviews();
+        setImageList([]);
+        setEditItem(null);
+        startTransition(() => router.refresh());
+        toast({ title: "Success", description: "Gallery item updated." });
+      } else {
+        setError("error" in result ? result.error : "Failed to update");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
+      toast({
+        title: "Upload failed",
+        description: err instanceof Error ? err.message : "Could not upload image(s)",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -445,7 +445,7 @@ export default function GalleryListClient({
       <Dialog
         open={createOpen}
         onOpenChange={(open) => {
-          if (!open) setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+          if (!open) revokeAllFilePreviews();
           setCreateOpen(open);
         }}
       >
@@ -489,18 +489,18 @@ export default function GalleryListClient({
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-900 dark:text-white mb-1">
-                Note: First Image will be the Cover image 
+                Note: First Image will be the Cover image
               </label>
-              {formImages.length > 0 && (
+              {imageList.length > 0 && (
                 <ul className="flex flex-wrap gap-2 mb-3">
-                  {formImages.map((url, i) => (
-                    <li key={`${url}-${i}`} className="relative group flex items-center gap-1">
+                  {imageList.map((entry, i) => (
+                    <li key={entry.type === "file" ? `${i}-${entry.file.name}` : `${i}-${entry.url}`} className="relative group flex items-center gap-1">
                       <div className="w-16 h-16 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
-                        <img src={url} alt="" className="w-full h-full object-cover" />
+                        <img src={getPreviewSrc(entry)} alt="" className="w-full h-full object-cover" />
                       </div>
                       <div className="flex flex-col gap-0.5">
                         <button type="button" onClick={() => moveImage(i, "up")} disabled={i === 0} className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40" aria-label="Move up"><ChevronUp className="w-4 h-4" /></button>
-                        <button type="button" onClick={() => moveImage(i, "down")} disabled={i === formImages.length - 1} className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40" aria-label="Move down"><ChevronDown className="w-4 h-4" /></button>
+                        <button type="button" onClick={() => moveImage(i, "down")} disabled={i === imageList.length - 1} className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40" aria-label="Move down"><ChevronDown className="w-4 h-4" /></button>
                       </div>
                       <button type="button" onClick={() => removeImageAt(i)} className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs hover:bg-red-600" aria-label="Remove">×</button>
                     </li>
@@ -515,32 +515,31 @@ export default function GalleryListClient({
                   className="hidden"
                   id="create-gallery-images"
                   onChange={(e) => {
-                    handleMultipleImageUpload(e.target.files);
+                    addFilesToImageList(e.target.files);
                     e.target.value = "";
                   }}
-                  disabled={isUploading || formImages.length >= MAX_GALLERY_IMAGES}
+                  disabled={imageList.length >= MAX_GALLERY_IMAGES}
                 />
                 <label
                   htmlFor="create-gallery-images"
                   className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm font-medium ${
-                    isUploading || formImages.length >= MAX_GALLERY_IMAGES
+                    imageList.length >= MAX_GALLERY_IMAGES
                       ? "opacity-50 cursor-not-allowed pointer-events-none"
                       : "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
                   <Plus className="w-4 h-4" /> Add image(s)
                 </label>
-                <span className="text-xs text-muted-foreground">Max 4MB per file</span>
-                {isUploading && <span className="text-xs text-slate-500">Uploading...</span>}
-                {formImages.length >= MAX_GALLERY_IMAGES && !isUploading && (
+                <span className="text-xs text-muted-foreground">Max 4MB per file. Uploads when you save.</span>
+                {imageList.length >= MAX_GALLERY_IMAGES && (
                   <span className="text-xs text-amber-600 dark:text-amber-400">Maximum {MAX_GALLERY_IMAGES} images.</span>
                 )}
               </div>
-              {formImages.length === 0 && !isUploading && (
+              {imageList.length === 0 && (
                 <p className="text-xs text-slate-500 mt-1">Select one or more images (JPEG, PNG, WebP, GIF). At least one required, max {MAX_GALLERY_IMAGES}.</p>
               )}
-              {formImages.length > 0 && formImages.length < MAX_GALLERY_IMAGES && !isUploading && (
-                <p className="text-xs text-slate-500 mt-1">{formImages.length} / {MAX_GALLERY_IMAGES} images</p>
+              {imageList.length > 0 && imageList.length < MAX_GALLERY_IMAGES && (
+                <p className="text-xs text-slate-500 mt-1">{imageList.length} / {MAX_GALLERY_IMAGES} images</p>
               )}
             </div>
             <div>
@@ -560,7 +559,7 @@ export default function GalleryListClient({
               <button
                 type="button"
                 onClick={() => {
-                  setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+                  revokeAllFilePreviews();
                   setCreateOpen(false);
                 }}
                 className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -569,7 +568,7 @@ export default function GalleryListClient({
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || formImages.length === 0}
+                disabled={isSubmitting || imageList.length === 0}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />{" "}
@@ -585,7 +584,7 @@ export default function GalleryListClient({
         open={!!editItem}
         onOpenChange={(open) => {
           if (!open) {
-            setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+            revokeAllFilePreviews();
             setEditItem(null);
           }
         }}
@@ -628,18 +627,18 @@ export default function GalleryListClient({
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-900 dark:text-white mb-1">
-                Note: First Image will be the Cover image 
+                Note: First Image will be the Cover image
               </label>
-              {formImages.length > 0 && (
+              {imageList.length > 0 && (
                 <ul className="flex flex-wrap gap-2 mb-3">
-                  {formImages.map((url, i) => (
-                    <li key={`${url}-${i}`} className="relative group flex items-center gap-1">
+                  {imageList.map((entry, i) => (
+                    <li key={entry.type === "file" ? `${i}-${entry.file.name}` : `${i}-${entry.url}`} className="relative group flex items-center gap-1">
                       <div className="w-16 h-16 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
-                        <img src={url} alt="" className="w-full h-full object-cover" />
+                        <img src={getPreviewSrc(entry)} alt="" className="w-full h-full object-cover" />
                       </div>
                       <div className="flex flex-col gap-0.5">
                         <button type="button" onClick={() => moveImage(i, "up")} disabled={i === 0} className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40" aria-label="Move up"><ChevronUp className="w-4 h-4" /></button>
-                        <button type="button" onClick={() => moveImage(i, "down")} disabled={i === formImages.length - 1} className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40" aria-label="Move down"><ChevronDown className="w-4 h-4" /></button>
+                        <button type="button" onClick={() => moveImage(i, "down")} disabled={i === imageList.length - 1} className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40" aria-label="Move down"><ChevronDown className="w-4 h-4" /></button>
                       </div>
                       <button type="button" onClick={() => removeImageAt(i)} className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs hover:bg-red-600" aria-label="Remove">×</button>
                     </li>
@@ -654,31 +653,30 @@ export default function GalleryListClient({
                   className="hidden"
                   id="edit-gallery-images"
                   onChange={(e) => {
-                    handleMultipleImageUpload(e.target.files);
+                    addFilesToImageList(e.target.files);
                     e.target.value = "";
                   }}
-                  disabled={isUploading || formImages.length >= MAX_GALLERY_IMAGES}
+                  disabled={imageList.length >= MAX_GALLERY_IMAGES}
                 />
                 <label
                   htmlFor="edit-gallery-images"
                   className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm font-medium ${
-                    isUploading || formImages.length >= MAX_GALLERY_IMAGES
+                    imageList.length >= MAX_GALLERY_IMAGES
                       ? "opacity-50 cursor-not-allowed pointer-events-none"
                       : "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
                   <Plus className="w-4 h-4" /> Add image(s)
                 </label>
-                <span className="text-xs text-muted-foreground">Max 4MB per file</span>
-                {isUploading && <span className="text-xs text-slate-500">Uploading...</span>}
-                {formImages.length >= MAX_GALLERY_IMAGES && !isUploading && (
+                <span className="text-xs text-muted-foreground">Max 4MB per file. Uploads when you save.</span>
+                {imageList.length >= MAX_GALLERY_IMAGES && (
                   <span className="text-xs text-amber-600 dark:text-amber-400">Maximum {MAX_GALLERY_IMAGES} images.</span>
                 )}
               </div>
-              {formImages.length > 0 && formImages.length < MAX_GALLERY_IMAGES && !isUploading && (
-                <p className="text-xs text-slate-500 mt-1">{formImages.length} / {MAX_GALLERY_IMAGES} images</p>
+              {imageList.length > 0 && imageList.length < MAX_GALLERY_IMAGES && (
+                <p className="text-xs text-slate-500 mt-1">{imageList.length} / {MAX_GALLERY_IMAGES} images</p>
               )}
-              {formImages.length === 0 && !isUploading && (
+              {imageList.length === 0 && (
                 <p className="text-xs text-slate-500 mt-1">At least one image required. Max {MAX_GALLERY_IMAGES}.</p>
               )}
             </div>
@@ -697,14 +695,17 @@ export default function GalleryListClient({
             <DialogFooter>
               <button
                 type="button"
-                onClick={() => setEditItem(null)}
+                onClick={() => {
+                  revokeAllFilePreviews();
+                  setEditItem(null);
+                }}
                 className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || imageList.length === 0}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />{" "}

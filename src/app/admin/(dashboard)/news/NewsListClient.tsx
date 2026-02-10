@@ -63,36 +63,39 @@ export default function NewsListClient({
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ ...emptyArticle, id: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
 
-  const handleImageUpload = async (file: File) => {
+  const handleImageSelect = (file: File) => {
     if (!file.type.startsWith("image/")) return;
-    const objectUrl = URL.createObjectURL(file);
     setImagePreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
-      return objectUrl;
+      return URL.createObjectURL(file);
     });
-    setIsUploading(true);
-    try {
-      const form = new FormData();
-      form.append("image", file);
-      form.append("type", "news");
-      const res = await fetch("/api/upload", { method: "POST", body: form });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Upload failed");
-      }
-      const data = await res.json();
-      setFormData((prev) => ({ ...prev, image: data.url }));
-      setImagePreviewUrl((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return null;
-      });
-    } finally {
-      setIsUploading(false);
+    setPendingImageFile(file);
+    setFormData((prev) => ({ ...prev, image: "" }));
+  };
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const form = new FormData();
+    form.append("image", file);
+    form.append("type", "news");
+    const res = await fetch("/api/upload", { method: "POST", body: form });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "Upload failed");
     }
+    const data = await res.json();
+    return data.url;
+  };
+
+  const clearImagePreview = () => {
+    setImagePreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    setPendingImageFile(null);
   };
 
   const filteredArticles = articles.filter(
@@ -104,16 +107,14 @@ export default function NewsListClient({
 
   const handleCreateOpen = () => {
     setError(null);
-    setImagePreviewUrl((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
-      return null;
-    });
+    clearImagePreview();
     setFormData({ ...emptyArticle, id: "" });
     setCreateOpen(true);
   };
 
   const handleEditOpen = (article: NewsArticle) => {
     setError(null);
+    clearImagePreview();
     setFormData({ ...article });
     setEditArticle(article);
   };
@@ -130,16 +131,32 @@ export default function NewsListClient({
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setIsSubmitting(true);
+    let imageUrl = formData.image;
+    if (pendingImageFile) {
+      setIsSubmitting(true);
+      try {
+        imageUrl = await uploadImage(pendingImageFile);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Upload failed");
+        setIsSubmitting(false);
+        return;
+      }
+    } else if (!formData.image) {
+      setError("Image is required.");
+      return;
+    } else {
+      setIsSubmitting(true);
+    }
     const result = await createNewsArticle({
       title: formData.title,
       excerpt: formData.excerpt,
       date: formData.date,
       category: formData.category,
-      image: formData.image,
+      image: imageUrl,
     });
     setIsSubmitting(false);
     if (result.success) {
+      clearImagePreview();
       setCreateOpen(false);
       startTransition(() => router.refresh());
       toast({ title: "Success", description: "Article created." });
@@ -152,16 +169,29 @@ export default function NewsListClient({
     e.preventDefault();
     if (!editArticle) return;
     setError(null);
-    setIsSubmitting(true);
+    let imageUrl = formData.image;
+    if (pendingImageFile) {
+      setIsSubmitting(true);
+      try {
+        imageUrl = await uploadImage(pendingImageFile);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Upload failed");
+        setIsSubmitting(false);
+        return;
+      }
+    } else {
+      setIsSubmitting(true);
+    }
     const result = await updateNewsArticle(editArticle.id, {
       title: formData.title,
       excerpt: formData.excerpt,
       date: formData.date,
       category: formData.category,
-      image: formData.image,
+      image: imageUrl,
     });
     setIsSubmitting(false);
     if (result.success) {
+      clearImagePreview();
       setEditArticle(null);
       startTransition(() => router.refresh());
       toast({ title: "Success", description: "Article updated." });
@@ -319,7 +349,7 @@ export default function NewsListClient({
       <Dialog
         open={createOpen}
         onOpenChange={(open) => {
-          if (!open) setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+          if (!open) clearImagePreview();
           setCreateOpen(open);
         }}
       >
@@ -405,23 +435,19 @@ export default function NewsListClient({
                 className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) handleImageUpload(file);
+                  if (file) handleImageSelect(file);
+                  e.target.value = "";
                 }}
-                disabled={isUploading}
               />
-              {isUploading && <p className="text-xs text-slate-500 mt-1">Uploading...</p>}
-              {formData.image && !isUploading && (
-                <p className="text-xs text-slate-500 mt-1 truncate">Uploaded: {formData.image}</p>
-              )}
-              {!formData.image && !isUploading && !imagePreviewUrl && (
-                <p className="text-xs text-slate-500 mt-1">JPEG, PNG, WebP or GIF. Max 5MB.</p>
+              {!formData.image && !imagePreviewUrl && (
+                <p className="text-xs text-slate-500 mt-1">JPEG, PNG, WebP or GIF. Max 5MB. Image uploads when you save.</p>
               )}
             </div>
             <DialogFooter>
               <button
                 type="button"
                 onClick={() => {
-                  setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+                  clearImagePreview();
                   setCreateOpen(false);
                 }}
                 className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -430,7 +456,7 @@ export default function NewsListClient({
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !formData.image}
+                disabled={isSubmitting || (!formData.image && !pendingImageFile)}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />{" "}
@@ -444,7 +470,12 @@ export default function NewsListClient({
       {/* Edit Modal */}
       <Dialog
         open={!!editArticle}
-        onOpenChange={(open) => !open && setEditArticle(null)}
+        onOpenChange={(open) => {
+          if (!open) {
+            clearImagePreview();
+            setEditArticle(null);
+          }
+        }}
       >
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
           <DialogHeader>
@@ -525,20 +556,19 @@ export default function NewsListClient({
                 className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) handleImageUpload(file);
+                  if (file) handleImageSelect(file);
+                  e.target.value = "";
                 }}
-                disabled={isUploading}
               />
-              {isUploading && <p className="text-xs text-slate-500 mt-1">Uploading...</p>}
-              {(formData.image || imagePreviewUrl) && !isUploading && (
-                <p className="text-xs text-slate-500 mt-1">Current or choose a new image to replace.</p>
+              {(formData.image || imagePreviewUrl) && (
+                <p className="text-xs text-slate-500 mt-1">Current or choose a new image to replace. Uploads when you save.</p>
               )}
             </div>
             <DialogFooter>
               <button
                 type="button"
                 onClick={() => {
-                  setImagePreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+                  clearImagePreview();
                   setEditArticle(null);
                 }}
                 className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -547,7 +577,7 @@ export default function NewsListClient({
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !formData.image}
+                disabled={isSubmitting || (!formData.image && !pendingImageFile)}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />{" "}

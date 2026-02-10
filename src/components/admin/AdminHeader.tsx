@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, User, Settings, Menu } from "lucide-react";
+import { LogOut, User, Settings, Menu, Home } from "lucide-react";
 import Image from "next/image";
 import {
   DropdownMenu,
@@ -110,6 +110,12 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/" className="cursor-pointer">
+                <Home className="mr-2 h-4 w-4" />
+                <span>View site</span>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/admin/dashboard" className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
