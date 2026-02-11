@@ -88,22 +88,22 @@ const About = () => {
           </motion.div>
         </div>
 
-        {/* Chairman&apos;s Statement */}
+        {/* Chairman's Statement */}
         <motion.div
           className="bg-card rounded-2xl overflow-hidden shadow-card border border-border/50"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <div className="grid lg:grid-cols-5 items-stretch">
-            {/* Image */}
-            <div className="lg:col-span-2 relative h-48 sm:h-56 md:h-64 lg:h-auto min-h-[12rem]">
+          <div className="grid grid-cols-1 lg:grid-cols-5 items-stretch">
+            {/* CEO Image - full width on mobile, portrait aspect so face is visible */}
+            <div className="relative w-full min-h-[280px] sm:min-h-[320px] lg:min-h-0 lg:col-span-2 lg:h-full aspect-[3/4] lg:aspect-auto bg-muted">
               <img
                 src={chairmanImage}
-                alt="Chairman"
-                className="w-full h-full object-cover object-top"
+                alt="Group Chairman"
+                className="absolute inset-0 w-full h-full object-cover object-[50%_15%] sm:object-[50%_10%]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent lg:bg-gradient-to-r" />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-foreground/10" />
             </div>
 
             {/* Quote */}
