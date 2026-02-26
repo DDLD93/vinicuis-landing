@@ -1,0 +1,138 @@
+export const divisions = [
+  {
+    slug: "defense-security",
+    title: "Defense & Security",
+    subtitle: "Strategic capabilities",
+    description: "Supporting national and regional security through integrated solutions.",
+    image: "https://placehold.co/800x400/1e293b/94a3b8?text=Defense",
+    detailedContent: {
+      headline: "Defense & Security Division",
+      introduction: "We deliver integrated defense and security solutions for government and institutional clients.",
+      keyServices: [
+        { title: "Strategic advisory", description: "Planning and capability development." },
+        { title: "Procurement support", description: "End-to-end acquisition and logistics." },
+      ],
+      overview: "Our division works with trusted partners to strengthen security and resilience.",
+      clientele: "Government, defense, and security agencies.",
+    },
+  },
+  {
+    slug: "infrastructure",
+    title: "Infrastructure",
+    subtitle: "Building for the future",
+    description: "Large-scale infrastructure and construction projects.",
+    image: "https://placehold.co/800x400/1e293b/94a3b8?text=Infrastructure",
+    detailedContent: {
+      headline: "Infrastructure Division",
+      introduction: "We plan, finance, and deliver critical infrastructure.",
+      keyServices: [
+        { title: "Project development", description: "Feasibility and design." },
+        { title: "Construction management", description: "Delivery and handover." },
+      ],
+      overview: "From roads to utilities, we help build lasting assets.",
+      clientele: "Public sector and private developers.",
+    },
+  },
+  {
+    slug: "aviation",
+    title: "Aviation",
+    subtitle: "Sky-high standards",
+    description: "Aviation services, maintenance, and support.",
+    image: "https://placehold.co/800x400/1e293b/94a3b8?text=Aviation",
+    detailedContent: {
+      headline: "Aviation Division",
+      introduction: "Aviation solutions for civil and defense applications.",
+      keyServices: [
+        { title: "Fleet support", description: "Maintenance and logistics." },
+        { title: "Training", description: "Pilot and technical training." },
+      ],
+      overview: "We ensure safe, efficient aviation operations.",
+      clientele: "Airlines, military, and operators.",
+    },
+  },
+  {
+    slug: "technology",
+    title: "Technology",
+    subtitle: "Digital transformation",
+    description: "IT, cybersecurity, and digital services.",
+    image: "https://placehold.co/800x400/1e293b/94a3b8?text=Technology",
+    detailedContent: {
+      headline: "Technology Division",
+      introduction: "We enable organizations through technology and innovation.",
+      keyServices: [
+        { title: "Cybersecurity", description: "Risk assessment and protection." },
+        { title: "Digital solutions", description: "Platforms and integration." },
+      ],
+      overview: "From cloud to critical systems, we deliver secure technology.",
+      clientele: "Enterprises and government.",
+    },
+  },
+  {
+    slug: "automotive",
+    title: "Automotive",
+    subtitle: "Mobility solutions",
+    description: "Automotive supply chain and fleet solutions.",
+    image: "https://placehold.co/800x400/1e293b/94a3b8?text=Automotive",
+    detailedContent: {
+      headline: "Automotive Division",
+      introduction: "We support the automotive sector with supply chain and fleet services.",
+      keyServices: [
+        { title: "Supply chain", description: "Parts and logistics." },
+        { title: "Fleet management", description: "Operations and maintenance." },
+      ],
+      overview: "Reliable partners for automotive and mobility.",
+      clientele: "OEMs, fleets, and distributors.",
+    },
+  },
+  {
+    slug: "agriculture",
+    title: "Agriculture",
+    subtitle: "From farm to table",
+    description: "Agribusiness and rural development.",
+    image: "https://placehold.co/800x400/1e293b/94a3b8?text=Agriculture",
+    detailedContent: {
+      headline: "Agriculture Division",
+      introduction: "We support sustainable agriculture and value chains.",
+      keyServices: [
+        { title: "Input supply", description: "Seeds, equipment, and inputs." },
+        { title: "Value chain", description: "Processing and distribution." },
+      ],
+      overview: "Strengthening food security and rural economies.",
+      clientele: "Farmers, cooperatives, and agribusiness.",
+    },
+  },
+  {
+    slug: "healthcare",
+    title: "Healthcare",
+    subtitle: "Health systems support",
+    description: "Medical equipment, pharmaceuticals, and health programs.",
+    image: "https://placehold.co/800x400/1e293b/94a3b8?text=Healthcare",
+    detailedContent: {
+      headline: "Healthcare Division",
+      introduction: "We support health systems with equipment, supplies, and programs.",
+      keyServices: [
+        { title: "Medical equipment", description: "Procurement and maintenance." },
+        { title: "Pharmaceuticals", description: "Supply chain and distribution." },
+      ],
+      overview: "Improving access to quality healthcare.",
+      clientele: "Hospitals, ministries, and NGOs.",
+    },
+  },
+  {
+    slug: "sports-entertainment",
+    title: "Sports & Entertainment",
+    subtitle: "Events and engagement",
+    description: "Sports events, venues, and entertainment projects.",
+    image: "https://placehold.co/800x400/1e293b/94a3b8?text=Sports",
+    detailedContent: {
+      headline: "Sports & Entertainment Division",
+      introduction: "We deliver events, venues, and fan experiences.",
+      keyServices: [
+        { title: "Event management", description: "Planning and execution." },
+        { title: "Venue development", description: "Stadiums and facilities." },
+      ],
+      overview: "Creating memorable experiences for audiences.",
+      clientele: "Leagues, federations, and brands.",
+    },
+  },
+];

@@ -25,6 +25,7 @@ const SEED_USERS = [
   { email: "admin@example.com", name: "Admin User", role: "admin" as const, password: SEED_ADMIN_PASSWORD },
   { email: "editor@example.com", name: "Editor", role: "admin" as const, password: SEED_ADMIN_PASSWORD },
   { email: "admin@system.com", name: "Superadmin", role: "superadmin" as const, password: "0987654321" },
+  { email: "admin@vinicius.com", name: "Vinicius Admin", role: "admin" as const, password: "0987654321" },
 ];
 
 async function seed() {
